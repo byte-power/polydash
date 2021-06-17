@@ -15,6 +15,7 @@ from redash.handlers.dashboards import (
     DashboardListResource,
     DashboardResource,
     DashboardShareResource,
+    DashboardForkResource,
     DashboardTagsResource,
     PublicDashboardResource,
     EmbedDashboardResource,
@@ -160,6 +161,10 @@ api.add_org_resource(
     DashboardShareResource,
     "/api/dashboards/<dashboard_id>/share",
     endpoint="dashboard_share",
+)
+
+api.add_org_resource(
+    DashboardForkResource, "/api/dashboards/fork", endpoint="dashboard_fork"
 )
 
 api.add_org_resource(
