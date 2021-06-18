@@ -254,3 +254,14 @@ class TestDashboardShareResourceDelete(BaseTestCase):
             "delete", "/api/dashboards/{}/share".format(dashboard.id), user=user
         )
         self.assertEqual(res.status_code, 200)
+
+class TestDashboardForkResource(BaseTestCase):
+    def test_fork_success(self):
+        dashboard = self.factory.create_dashboard(slug='test')
+
+        res = self.make_request(
+            "POST", "/api/dashboards/fork",
+            data={"slug": dashboard.slug}
+        )
+        self.assertEqual(res.status_code, 200)
+        n = json_loads(res.data)
