@@ -165,7 +165,7 @@ function DashboardMoreOptionsButton({ dashboardOptions }) {
           </Menu.Item>
           {!isDuplicating && (
             <Menu.Item>
-              <a onClick={duplicateDashboard}>Fork Dashboard</a>
+              <a onClick={duplicateDashboard}>Fork</a>
             </Menu.Item>
           )}
         </Menu>

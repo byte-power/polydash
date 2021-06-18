@@ -401,13 +401,12 @@ class DashboardForkResource(BaseResource):
                    .outerjoin(models.Visualization)
                    .outerjoin(models.Query))
 
-        dashboard_duplicate = models.Dashboard(name=u'Copy of (#{}) {}'.format(dashboard.name, dashboard_slug),
+        dashboard_duplicate = models.Dashboard(name=u'fork-of-{}'.format(dashboard.name, dashboard_slug),
                                                org=self.current_org,
                                                user=self.current_user,
                                                is_draft=True,
                                                layout='[]')
 
-        dashboard_duplicate.slug = dashboard_duplicate.id
         models.db.session.add(dashboard_duplicate)
 
         for widget in widgets:

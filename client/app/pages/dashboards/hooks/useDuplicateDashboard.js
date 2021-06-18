@@ -27,7 +27,7 @@ export default function useDuplicateDashboard(dashboard) {
     setIsDuplicating(true);
     Dashboard.fork({ slug: dashboard.slug })
       .then(newDashboard => {
-        tab.location = keepCurrentUrlParams(newDashboard.getUrl(true));
+        tab.location = keepCurrentUrlParams(newDashboard.url);
       })
       .finally(() => {
         setIsDuplicating(false);
