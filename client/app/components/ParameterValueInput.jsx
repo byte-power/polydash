@@ -101,7 +101,7 @@ class ParameterValueInput extends React.Component {
       <SelectWithVirtualScroll
         className={this.props.className}
         mode={parameter.multiValuesOptions ? "multiple" : "default"}
-        optionFilterProp="children"
+        optionFilterProp="label"
         value={normalize(value)}
         onChange={this.onSelect}
         options={map(enumOptionsArray, opt => ({ label: String(opt), value: opt }))}
