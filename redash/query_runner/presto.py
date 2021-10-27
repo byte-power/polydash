@@ -6,7 +6,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-
 try:
     from pyhive import presto
     from pyhive.exc import DatabaseError
@@ -104,9 +103,17 @@ class Presto(BaseQueryRunner):
         )
 
         cursor = connection.cursor()
-
         try:
-            cursor.execute(query)
+            query_list = []
+            query = query.replace('\n', '')
+            if ';' in query:
+                query_list.extend([s for s in query.split(';') if s])
+            else:
+                query_list.append(query)
+            for sql in query_list[:-1]:
+                cursor.execute(sql)
+                cursor.fetchall()
+            cursor.execute(query_list[-1])
             column_tuples = [
                 (i[0], PRESTO_TYPES_MAPPING.get(i[1], None)) for i in cursor.description
             ]
