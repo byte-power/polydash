@@ -21,6 +21,8 @@ function prepareBarSeries(series, options, additionalOptions) {
   series.offsetgroup = toString(additionalOptions.index);
   if (options.showDataLabels) {
     series.textposition = "inside";
+  } else {
+    series.textposition = "none";
   }
   return series;
 }
