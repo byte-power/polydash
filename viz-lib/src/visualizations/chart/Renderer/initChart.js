@@ -1,6 +1,6 @@
 import { isArray, isObject, isString, isFunction, startsWith, reduce, merge, map, each } from "lodash";
 import resizeObserver from "@/services/resizeObserver";
-import { Plotly, prepareData, prepareLayout, updateData, updateAxes, updateChartSize } from "../plotly";
+import { echarts, Plotly, prepareData, prepareLayout, updateData, updateAxes, updateChartSize } from "../plotly";
 
 function createErrorHandler(errorHandler) {
   return error => {
@@ -80,9 +80,43 @@ export default function initChart(container, options, data, additionalOptions, o
   }
 
   let unwatchResize = () => {};
-
+  let myChart;
+  function initEchart(myChart, data) {
+    myChart = echarts.init(container);
+    let option = {
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "line",
+        },
+      },
+      grid: {
+        left: "1%",
+        right: "1%",
+        bottom: "1%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          type: "bar",
+        },
+      ],
+    };
+    option.xAxis.data = data[0].x;
+    option.series[0].data = data[0].y;
+    myChart.setOption(option);
+  }
   const promise = Promise.resolve()
-    .then(() => Plotly.newPlot(container, plotlyData, plotlyLayout, plotlyOptions))
+    .then(() => {
+      Plotly.newPlot(container, plotlyData, plotlyLayout, plotlyOptions);
+      initEchart(myChart, plotlyData);
+    })
     .then(
       createSafeFunction(() =>
         updater
