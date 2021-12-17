@@ -92,6 +92,7 @@ class Presto(BaseQueryRunner):
         return list(schema.values())
 
     def run_query(self, query, user):
+        logger.info('run_query,%s'%query)
         connection = presto.connect(
             host=self.configuration.get("host", ""),
             port=self.configuration.get("port", 8080),
