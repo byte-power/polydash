@@ -104,16 +104,27 @@ class Presto(BaseQueryRunner):
 
         cursor = connection.cursor()
         try:
-            query_list = []
-            query = query.replace('\n', '')
-            if ';' in query:
-                query_list.extend([s for s in query.split(';') if s])
-            else:
-                query_list.append(query)
-            for sql in query_list[:-1]:
+            clean_query_list = []
+            clean_query = ''
+            for query_line in query.split('\n'):
+                if not query_line:
+                    continue
+                query_line = query_line.strip()
+                if query_line.startswith('--'):
+                    continue
+                if query_line.endswith(';'):
+                    q = query_line.strip(';').strip()
+                    clean_query = clean_query + ' ' + q if clean_query else q
+                    clean_query_list.append(clean_query)
+                    clean_query = ''
+                else:
+                    clean_query = clean_query + ' ' + query_line if clean_query else query_line
+            if clean_query:
+                clean_query_list.append(clean_query)
+            for sql in clean_query_list[:-1]:
                 cursor.execute(sql)
                 cursor.fetchall()
-            cursor.execute(query_list[-1])
+            cursor.execute(clean_query_list[-1])
             column_tuples = [
                 (i[0], PRESTO_TYPES_MAPPING.get(i[1], None)) for i in cursor.description
             ]
