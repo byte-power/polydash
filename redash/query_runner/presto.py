@@ -3,6 +3,7 @@ from redash.query_runner import *
 from redash.utils import json_dumps, json_loads
 
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -92,6 +93,13 @@ class Presto(BaseQueryRunner):
         return list(schema.values())
 
     def run_query(self, query, user):
+        # query string may begin with /* Username: xxx, Query ID: adhoc, Queue: queries, Job ID: xxx, Query Hash: xxx, Scheduled: False */    [raw query]
+        # we need to extract raw query string if query begin like this format
+        logger.info('run_query,%s'%query)
+        pattern_str = """^\/\*.+\*\/(.*)$"""
+        result = re.findall(pattern_str,query,re.S)
+        if result:
+            query = result[0]
         connection = presto.connect(
             host=self.configuration.get("host", ""),
             port=self.configuration.get("port", 8080),
