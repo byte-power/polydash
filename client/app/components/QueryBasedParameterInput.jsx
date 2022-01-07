@@ -78,8 +78,6 @@ export default class QueryBasedParameterInput extends React.Component {
   render() {
     const { className, mode, onSelect, queryId, value, ...otherProps } = this.props;
     const { loading, options } = this.state;
-    console.log(options);
-    console.log(sortBy(options,function(o){return o.name}));
     return (
       <span>
         <SelectWithVirtualScroll
@@ -89,7 +87,7 @@ export default class QueryBasedParameterInput extends React.Component {
           mode={mode}
           value={this.state.value}
           onChange={onSelect}
-          options={sortBy(map(options, ({ value, name }) => ({ label: String(name), value })), function(o){return o.name})}
+          options={map(options, ({ value, name }) => ({ label: String(name), value }))}
           optionFilterProp="label"
           showSearch
           showArrow
