@@ -1,4 +1,4 @@
-import { find, isArray, get, first, map, intersection, isEqual, isEmpty } from "lodash";
+import { find, isArray, get, first, map, intersection, isEqual, isEmpty, sortBy } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 import SelectWithVirtualScroll from "@/components/SelectWithVirtualScroll";
@@ -62,8 +62,7 @@ export default class QueryBasedParameterInput extends React.Component {
   async _loadOptions(queryId) {
     if (queryId && queryId !== this.state.queryId) {
       this.setState({ loading: true });
-      const options = await this.props.parameter.loadDropdownValues();
-
+      const options = sortBy(await this.props.parameter.loadDropdownValues(),function(o){return o.name});
       // stale queryId check
       if (this.props.queryId === queryId) {
         this.setState({ options, loading: false }, () => {
@@ -89,7 +88,7 @@ export default class QueryBasedParameterInput extends React.Component {
           value={this.state.value}
           onChange={onSelect}
           options={map(options, ({ value, name }) => ({ label: String(name), value }))}
-          optionFilterProp="children"
+          optionFilterProp="label"
           showSearch
           showArrow
           notFoundContent={isEmpty(options) ? "No options available" : null}
