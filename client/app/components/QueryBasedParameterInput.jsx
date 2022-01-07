@@ -62,7 +62,7 @@ export default class QueryBasedParameterInput extends React.Component {
   async _loadOptions(queryId) {
     if (queryId && queryId !== this.state.queryId) {
       this.setState({ loading: true });
-      const options = await this.props.parameter.loadDropdownValues();
+      const options = sortBy(await this.props.parameter.loadDropdownValues(),function(o){return o.name});
       // stale queryId check
       if (this.props.queryId === queryId) {
         this.setState({ options, loading: false }, () => {
@@ -78,6 +78,8 @@ export default class QueryBasedParameterInput extends React.Component {
   render() {
     const { className, mode, onSelect, queryId, value, ...otherProps } = this.props;
     const { loading, options } = this.state;
+    console.log(options);
+    console.log(sortBy(options,function(o){return o.name}));
     return (
       <span>
         <SelectWithVirtualScroll
