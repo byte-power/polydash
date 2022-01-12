@@ -1,6 +1,11 @@
 import { isNil, isObject, each, forOwn, sortBy, values } from "lodash";
 
-function addPointToSeries(point, seriesCollection, seriesName) {
+function addPointToSeries(point, seriesCollection, seriesName, options) {
+  try {
+    if (!pieDatafilterLoseOption(point, options)) return;
+  } catch (error) {
+    throw new Warning("pieDatafilterLoseOption Warning", options);
+  }
   if (seriesCollection[seriesName] === undefined) {
     seriesCollection[seriesName] = {
       name: seriesName,
@@ -8,8 +13,20 @@ function addPointToSeries(point, seriesCollection, seriesName) {
       data: [],
     };
   }
-
   seriesCollection[seriesName].data.push(point);
+}
+
+/**
+ * @description: A negative value appears in the SQL query
+ * @param {*} point
+ * @param {*} options
+ * @return {*}
+ */
+function pieDatafilterLoseOption(point, options) {
+  if (options.globalSeriesType === 'pie') {
+    if (point.y < 0) return false;
+  }
+  return true;
 }
 
 export default function getChartData(data, options) {
@@ -67,7 +84,6 @@ export default function getChartData(data, options) {
         seriesName = String(value);
       }
     });
-
     if (isNil(seriesName)) {
       each(yValues, (yValue, ySeriesName) => {
         point = { x: xValue, y: yValue, $raw: point.$raw };
@@ -82,10 +98,10 @@ export default function getChartData(data, options) {
         if (zValue !== null) {
           point.zVal = zValue;
         }
-        addPointToSeries(point, series, ySeriesName);
+        addPointToSeries(point, series, ySeriesName, options);
       });
     } else {
-      addPointToSeries(point, series, seriesName);
+      addPointToSeries(point, series, seriesName, options);
     }
   });
   return sortBy(values(series), ({ name }) => {
