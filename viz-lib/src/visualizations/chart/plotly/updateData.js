@@ -1,4 +1,4 @@
-import { isNil, each, extend, filter, identity, includes, map, sortBy } from "lodash";
+import { isNil, each, extend, filter, identity, includes, map, sortBy, isEqual, cloneDeep } from "lodash";
 import { createNumberFormatter, formatSimpleTemplate } from "@/lib/value-format";
 import { normalizeValue } from "./utils";
 
@@ -61,12 +61,23 @@ function updateSeriesText(seriesList, options) {
     series.text = [];
     series.hover = [];
     const xValues = options.globalSeriesType === "pie" ? series.labels : series.x;
-    xValues.forEach(x => {
+    let num = 0;
+    let backupItem = {};
+    xValues.forEach((x, index) => {
       const text = {
         "@@name": series.name,
       };
-      const item = series.sourceData.get(x) || { x, y: defaultY, row: { x, y: defaultY } };
-
+      let item = series.sourceData.get(x) || { x, y: defaultY, row: { x, y: defaultY } };
+      if (Array.isArray(item)) {
+        if (isEqual(item, backupItem)) {
+          num++
+          item = item[num]
+        } else {
+          num = 0
+          backupItem = cloneDeep(item)
+          item = item[num]
+        }
+      }
       const yValueIsAny = includes(["bubble", "scatter"], seriesOptions.type);
 
       // for `formatValue` we have to use original value of `x` and `y`: `item.x`/`item.y` contains value
@@ -192,6 +203,7 @@ function updateLineAreaData(seriesList, options) {
 }
 
 function updateDefaultData(seriesList, options) {
+  console.log(seriesList, options, 'update');
   // Apply "percent values" modification
   updatePercentValues(seriesList, options);
 
@@ -206,6 +218,7 @@ function updateDefaultData(seriesList, options) {
 }
 
 export default function updateData(seriesList, options) {
+  console.log(seriesList, options, 'update');
   // Use only visible series
   const visibleSeriesList = filter(seriesList, s => s.visible === true);
 
