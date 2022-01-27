@@ -158,7 +158,7 @@ class GoogleAnalytics(BaseSQLQueryRunner):
             # Make sure we return a more readable error to the end user
             raise Exception(e._get_reason())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logger.debug("Analytics is about to execute query: %s", query)
         try:
             params = json_loads(query)

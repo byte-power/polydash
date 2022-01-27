@@ -157,6 +157,7 @@ class QueryExecutor(object):
         self.data_source_id = data_source_id
         self.metadata = metadata
         self.data_source = self._load_data_source()
+        self.org = self.data_source.org if self.data_source else None
         self.user = _resolve_user(user_id, is_api_key, metadata.get("Query ID"))
 
         # Close DB connection to prevent holding a connection for a long time while the query is executing.
@@ -178,7 +179,7 @@ class QueryExecutor(object):
         annotated_query = self._annotate_query(query_runner)
 
         try:
-            data, error = query_runner.run_query(annotated_query, self.user)
+            data, error = query_runner.run_query(annotated_query, self.user, self.org)
         except Exception as e:
             if isinstance(e, JobTimeoutException):
                 error = TIMEOUT_MESSAGE
@@ -249,7 +250,7 @@ class QueryExecutor(object):
     def _log_progress(self, state):
         logger.info(
             "job=execute_query state=%s query_hash=%s type=%s ds_id=%d  "
-            "job_id=%s queue=%s query_id=%s username=%s",
+            "job_id=%s queue=%s query_id=%s username=%s org_id=%d",
             state,
             self.query_hash,
             self.data_source.type,
@@ -258,6 +259,7 @@ class QueryExecutor(object):
             self.metadata.get("Queue", "unknown"),
             self.metadata.get("Query ID", "unknown"),
             self.metadata.get("Username", "unknown"),
+            "unknown" if self.org is None else self.org.id,
         )
 
     def _load_data_source(self):

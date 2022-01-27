@@ -126,7 +126,7 @@ class CloudWatchInsights(BaseQueryRunner):
 
         return log_groups
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logs = self._get_client()
 
         query = parse_query(query)

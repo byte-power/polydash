@@ -1,4 +1,4 @@
-import os
+import os, sys
 import logging
 import select
 from contextlib import contextmanager
@@ -10,7 +10,7 @@ import psycopg2
 from psycopg2.extras import Range
 
 from redash.query_runner import *
-from redash.utils import JSONEncoder, json_dumps, json_loads
+from redash.utils import JSONEncoder, json_dumps, json_loads, MaxQueryResultRowsExpection
 
 logger = logging.getLogger(__name__)
 
@@ -250,7 +250,7 @@ class PostgreSQL(BaseSQLQueryRunner):
 
         return connection
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = self._get_connection()
         _wait(connection, timeout=10)
 
@@ -264,10 +264,16 @@ class PostgreSQL(BaseSQLQueryRunner):
                 columns = self.fetch_columns(
                     [(i[0], types_map.get(i[1], None)) for i in cursor.description]
                 )
-                rows = [
-                    dict(zip((column["name"] for column in columns), row))
-                    for row in cursor
-                ]
+
+                rows =[]
+                query_results_count = 0
+                max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+                for row in cursor:
+                    if query_results_count >= max_query_result_rows:
+                        raise MaxQueryResultRowsExpection(max_query_result_rows)
+                    else:
+                        rows.append(dict(zip((column["name"] for column in columns), row)))
+                        query_results_count += 1
 
                 data = {"columns": columns, "rows": rows}
                 error = None
@@ -284,6 +290,9 @@ class PostgreSQL(BaseSQLQueryRunner):
         except (KeyboardInterrupt, InterruptException, JobTimeoutException):
             connection.cancel()
             raise
+        except MaxQueryResultRowsExpection as e:
+            error = str(e)
+            json_data = None
         finally:
             connection.close()
             _cleanup_ssl_certs(self.ssl_config)

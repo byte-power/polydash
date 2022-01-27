@@ -82,7 +82,7 @@ class TreasureData(BaseQueryRunner):
                 raise Exception("Failed getting schema")
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = tdclient.connect(
             endpoint=self.configuration.get("endpoint", "https://api.treasuredata.com"),
             apikey=self.configuration.get("apikey"),

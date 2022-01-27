@@ -80,7 +80,7 @@ class Dgraph(BaseQueryRunner):
             txn.discard()
             client_stub.close()
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
 
         json_data = None
         error = None

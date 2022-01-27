@@ -98,7 +98,7 @@ class MemSQL(BaseSQLQueryRunner):
                 schema[table_name] = {"name": table_name, "columns": columns}
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
 
         cursor = None
         try:

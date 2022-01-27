@@ -138,7 +138,7 @@ class Databricks(BaseSQLQueryRunner):
         connection = pyodbc.connect(connection_string, autocommit=True)
         return connection.cursor()
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         try:
             cursor = self._get_cursor()
 

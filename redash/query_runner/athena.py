@@ -1,9 +1,9 @@
 import logging
-import os
+import os, sys
 
 from redash.query_runner import *
 from redash.settings import parse_boolean
-from redash.utils import json_dumps, json_loads
+from redash.utils import json_dumps, json_loads, MaxQueryResultRowsExpection
 
 logger = logging.getLogger(__name__)
 ANNOTATE_QUERY = parse_boolean(os.environ.get("ATHENA_ANNOTATE_QUERY", "true"))
@@ -214,7 +214,7 @@ class Athena(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         cursor = pyathena.connect(
             s3_staging_dir=self.configuration["s3_staging_dir"],
             schema_name=self.configuration.get("schema", "default"),
@@ -231,10 +231,15 @@ class Athena(BaseQueryRunner):
                 (i[0], _TYPE_MAPPINGS.get(i[1], None)) for i in cursor.description
             ]
             columns = self.fetch_columns(column_tuples)
-            rows = [
-                dict(zip(([c["name"] for c in columns]), r))
-                for i, r in enumerate(cursor.fetchall())
-            ]
+
+            rows =[]
+            max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+            for i, r in enumerate(cursor.fetchall()):
+                if i >= max_query_result_rows:
+                    raise MaxQueryResultRowsExpection(max_query_result_rows)
+                else:
+                    rows.append(dict(zip(([c["name"] for c in columns]), r)))
+
             qbytes = None
             athena_query_id = None
             try:
@@ -259,6 +264,11 @@ class Athena(BaseQueryRunner):
 
             json_data = json_dumps(data, ignore_nan=True)
             error = None
+        except MaxQueryResultRowsExpection as e:
+            if cursor.query_id:
+                cursor.cancel()
+            json_data = None
+            error = str(e)
         except Exception:
             if cursor.query_id:
                 cursor.cancel()

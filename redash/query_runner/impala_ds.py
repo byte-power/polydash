@@ -91,7 +91,7 @@ class Impala(BaseSQLQueryRunner):
 
         return list(schema_dict.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
 
         connection = None
         try:

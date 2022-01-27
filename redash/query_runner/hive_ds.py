@@ -114,7 +114,7 @@ class Hive(BaseSQLQueryRunner):
 
         return connection
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = None
         try:
             connection = self._get_connection()

@@ -98,7 +98,7 @@ class Uptycs(BaseSQLQueryRunner):
             error = error + "\n" + response_output["error"]["message"]["detail"]
         return json_data, error
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         data, error = self.api_call(query)
         json_data = json_dumps(data)
         logger.debug("%s", json_data)

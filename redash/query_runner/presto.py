@@ -1,6 +1,7 @@
+import sys
 from collections import defaultdict
 from redash.query_runner import *
-from redash.utils import json_dumps, json_loads
+from redash.utils import json_dumps, json_loads, MaxQueryResultRowsExpection
 
 import logging
 import re
@@ -92,7 +93,7 @@ class Presto(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         # query string may begin with /* Username: xxx, Query ID: adhoc, Queue: queries, Job ID: xxx, Query Hash: xxx, Scheduled: False */    [raw query]
         # we need to extract raw query string if query begin like this format
         logger.info('run_query,%s'%query)
@@ -137,10 +138,15 @@ class Presto(BaseQueryRunner):
                 (i[0], PRESTO_TYPES_MAPPING.get(i[1], None)) for i in cursor.description
             ]
             columns = self.fetch_columns(column_tuples)
-            rows = [
-                dict(zip(([column["name"] for column in columns]), r))
-                for i, r in enumerate(cursor.fetchall())
-            ]
+
+            rows =[]
+            max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+            for i, r in enumerate(cursor.fetchall()):
+                if i >= max_query_result_rows:
+                    raise MaxQueryResultRowsExpection(max_query_result_rows)
+                else:
+                    rows.append(dict(zip(([column["name"] for column in columns]), r)))
+
             data = {"columns": columns, "rows": rows}
             json_data = json_dumps(data)
             error = None
@@ -154,6 +160,10 @@ class Presto(BaseQueryRunner):
             else:
                 message = None
             error = default_message if message is None else message
+        except MaxQueryResultRowsExpection as e:
+            cursor.cancel()
+            json_data = None
+            error = str(e)
         except (KeyboardInterrupt, InterruptException, JobTimeoutException):
             cursor.cancel()
             raise

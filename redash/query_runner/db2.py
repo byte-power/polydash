@@ -106,7 +106,7 @@ class DB2(BaseSQLQueryRunner):
 
         return connection
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = self._get_connection()
         cursor = connection.cursor()
 

@@ -69,7 +69,7 @@ class Script(BaseQueryRunner):
     def test_connection(self):
         pass
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         try:
             script = query_to_script_path(self.configuration["path"], query)
             return run_script(script, self.configuration["shell"])

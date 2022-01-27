@@ -71,7 +71,7 @@ class Qubole(BaseQueryRunner):
         )
         r.status_code == 200
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         qbol.configure(
             api_token=self.configuration.get("token"),
             api_url="%s/api" % self.configuration.get("endpoint"),

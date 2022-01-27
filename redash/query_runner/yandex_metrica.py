@@ -128,7 +128,7 @@ class YandexMetrica(BaseSQLQueryRunner):
             raise Exception(r.text)
         return r.json()
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logger.debug("Metrica is about to execute query: %s", query)
         data = None
         query = query.strip()

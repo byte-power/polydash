@@ -8,7 +8,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from redash.query_runner import *
-from redash.utils import json_dumps, json_loads
+from redash.utils import json_dumps, json_loads, MaxQueryResultRowsExpection
 
 try:
     import http.client as http_client
@@ -174,7 +174,7 @@ class BaseElasticSearch(BaseQueryRunner):
         return list(schema.values())
 
     def _parse_results(
-        self, mappings, result_fields, raw_result, result_columns, result_rows
+        self, mappings, result_fields, raw_result, result_columns, result_rows, max_query_result_rows 
     ):
         def add_column_if_needed(
             mappings, column_name, friendly_name, result_columns, result_columns_index
@@ -281,6 +281,7 @@ class BaseElasticSearch(BaseQueryRunner):
             for r in result_fields:
                 result_fields_index[r] = None
 
+
         if "error" in raw_result:
             error = raw_result["error"]
             if len(error) > 10240:
@@ -295,6 +296,8 @@ class BaseElasticSearch(BaseQueryRunner):
                     )
 
             for key, data in raw_result["aggregations"].items():
+                if len(result_rows) > max_query_result_rows:
+                    raise MaxQueryResultRowsExpection(max_query_result_rows)
                 collect_aggregations(
                     mappings,
                     result_rows,
@@ -315,8 +318,10 @@ class BaseElasticSearch(BaseQueryRunner):
                     )
 
             for h in raw_result["hits"]["hits"]:
-                row = {}
+                if len(result_rows) > max_query_result_rows:
+                    raise MaxQueryResultRowsExpection(max_query_result_rows)
 
+                row = {}
                 column_name = "_source" if "_source" in h else "fields"
                 for column in h[column_name]:
                     if result_fields and column not in result_fields_index:
@@ -363,8 +368,9 @@ class Kibana(BaseElasticSearch):
         return True
 
     def _execute_simple_query(
-        self, url, auth, _from, mappings, result_fields, result_columns, result_rows
+        self, url, auth, _from, mappings, result_fields, result_columns, result_rows, org
     ):
+        max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
         url += "&from={0}".format(_from)
         r = requests.get(url, auth=self.auth)
         r.raise_for_status()
@@ -372,16 +378,16 @@ class Kibana(BaseElasticSearch):
         raw_result = r.json()
 
         self._parse_results(
-            mappings, result_fields, raw_result, result_columns, result_rows
+            mappings, result_fields, raw_result, result_columns, result_rows, max_query_result_rows
         )
 
         total = raw_result["hits"]["total"]
         result_size = len(raw_result["hits"]["hits"])
         logger.debug("Result Size: {0}  Total: {1}".format(result_size, total))
 
-        return raw_result["hits"]["total"]
+        return r, raw_result["hits"]["total"]
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         try:
             error = None
 
@@ -420,7 +426,7 @@ class Kibana(BaseElasticSearch):
                 _from = 0
                 while True:
                     query_size = size if limit >= (_from + size) else (limit - _from)
-                    total = self._execute_simple_query(
+                    r, total = self._execute_simple_query(
                         url + "&size={0}".format(query_size),
                         self.auth,
                         _from,
@@ -428,6 +434,7 @@ class Kibana(BaseElasticSearch):
                         result_fields,
                         result_columns,
                         result_rows,
+                        org,
                     )
                     _from += size
                     if _from >= limit:
@@ -447,6 +454,9 @@ class Kibana(BaseElasticSearch):
             logger.exception(e)
             error = "Connection refused"
             json_data = None
+        except MaxQueryResultRowsExpection as e:
+            error = str(e)
+            json_data = None
 
         return json_data, error
 
@@ -460,7 +470,7 @@ class ElasticSearch(BaseElasticSearch):
     def name(cls):
         return "Elasticsearch"
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         try:
             error = None
 
@@ -489,12 +499,13 @@ class ElasticSearch(BaseElasticSearch):
 
             result_columns = []
             result_rows = []
+            max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
             self._parse_results(
-                mappings, result_fields, r.json(), result_columns, result_rows
+                mappings, result_fields, r.json(), result_columns, result_rows, max_query_result_rows
             )
 
             json_data = json_dumps({"columns": result_columns, "rows": result_rows})
-        except (KeyboardInterrupt, JobTimeoutException):
+        except (KeyboardInterrupt, JobTimeoutException) as e:
             logger.exception(e)
             raise
         except requests.HTTPError as e:
@@ -506,6 +517,9 @@ class ElasticSearch(BaseElasticSearch):
         except requests.exceptions.RequestException as e:
             logger.exception(e)
             error = "Connection refused"
+            json_data = None
+        except MaxQueryResultRowsExpection as e:
+            error = str(e)
             json_data = None
 
         return json_data, error
