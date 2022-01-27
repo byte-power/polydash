@@ -54,6 +54,8 @@ DISABLE_EMBED_URLS = parse_boolean(os.environ.get("REDASH_DISABLE_EMBED_URLS", "
 EMBED_URLS_EXPIRED_SECONDS = os.environ.get("REDASH_EMBED_URLS_EXPIRED_SECONDS", 10)
 EMBED_API_ACCESS_TOKEN_TTL = os.environ.get("REDASH_EMBED_API_ACCESS_TOKEN_TTL", 600)
 
+MAX_QUERY_RESULT_ROWS = os.environ.get("REDASH_MAX_QUERY_RESULT_ROWS", 10000)
+
 settings = {
     "beacon_consent": None,
     "auth_password_login_enabled": PASSWORD_LOGIN_ENABLED,
@@ -83,4 +85,5 @@ settings = {
     "disable_embed_urls": DISABLE_EMBED_URLS,
     "embed_urls_expired_seconds": EMBED_URLS_EXPIRED_SECONDS,
     "embed_api_access_token_ttl": EMBED_API_ACCESS_TOKEN_TTL,
+    "max_query_result_rows": MAX_QUERY_RESULT_ROWS,
 }

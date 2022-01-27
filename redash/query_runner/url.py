@@ -9,7 +9,7 @@ class Url(BaseHTTPQueryRunner):
     def test_connection(self):
         pass
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         base_url = self.configuration.get("url", None)
 
         query = query.strip()

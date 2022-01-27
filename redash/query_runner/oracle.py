@@ -124,7 +124,7 @@ class Oracle(BaseSQLQueryRunner):
                     arraysize=cursor.arraysize,
                 )
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         if self.configuration.get("encoding"):
             os.environ["NLS_LANG"] = self.configuration["encoding"]
 

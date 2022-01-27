@@ -145,7 +145,7 @@ class Salesforce(BaseQueryRunner):
             rows.append(row)
         return rows
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logger.debug("Salesforce is about to execute query: %s", query)
         query = re.sub(r"/\*(.|\n)*?\*/", "", query).strip()
         try:

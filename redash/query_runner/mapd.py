@@ -64,7 +64,7 @@ class Mapd(BaseSQLQueryRunner):
         )
         return connection
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = self.connect_database()
         cursor = connection.cursor()
 

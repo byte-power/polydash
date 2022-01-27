@@ -93,7 +93,7 @@ class Rockset(BaseSQLQueryRunner):
                 }
         return sorted(schema.values(), key=lambda x: x['name'])
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         results = self.api.query(query)
         if "code" in results and results["code"] != 200:
             return None, "{}: {}".format(results["type"], results["message"])

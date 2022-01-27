@@ -124,7 +124,7 @@ class Cassandra(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = None
         cert_path = self._generate_cert_file()
         if self.configuration.get("username", "") and self.configuration.get(

@@ -89,7 +89,7 @@ class Vertica(BaseSQLQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         import vertica_python
 
         if query == "":

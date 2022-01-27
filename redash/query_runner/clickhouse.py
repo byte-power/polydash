@@ -1,3 +1,4 @@
+import sys
 import logging
 import re
 from urllib.parse import urlparse
@@ -87,8 +88,9 @@ class ClickHouse(BaseSQLQueryRunner):
 
         return list(schema.values())
 
-    def _send_query(self, data, stream=False):
+    def _send_query(self, data, max_query_result_rows, stream=False):
         url = self.configuration.get("url", "http://127.0.0.1:8123")
+        url += "?max_result_rows={}".format(max_query_result_rows)
         try:
             verify = self.configuration.get("verify", True)
             r = requests.post(
@@ -105,7 +107,6 @@ class ClickHouse(BaseSQLQueryRunner):
             )
             if r.status_code != 200:
                 raise Exception(r.text)
-            # logging.warning(r.json())
             return r.json()
         except requests.RequestException as e:
             if e.response:
@@ -133,9 +134,9 @@ class ClickHouse(BaseSQLQueryRunner):
         else:
             return TYPE_STRING
 
-    def _clickhouse_query(self, query):
+    def _clickhouse_query(self, query, max_query_result_rows):
         query += "\nFORMAT JSON"
-        result = self._send_query(query)
+        result = self._send_query(query, max_query_result_rows)
         columns = []
         columns_int64 = []  # db converts value to string if its type equals UInt64
         columns_totals = {}
@@ -171,14 +172,15 @@ class ClickHouse(BaseSQLQueryRunner):
 
         return {"columns": columns, "rows": rows}
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logger.debug("Clickhouse is about to execute query: %s", query)
         if query == "":
             json_data = None
             error = "Query is empty"
             return json_data, error
         try:
-            q = self._clickhouse_query(query)
+            max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+            q = self._clickhouse_query(query, max_query_result_rows)
             data = json_dumps(q)
             error = None
         except Exception as e:

@@ -147,7 +147,7 @@ class Couchbase(BaseQueryRunner):
                 raise Exception("Wrong username/password")
             raise Exception("Couchbase connection error")
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         result = self.call_service(query, user)
 
         rows, columns = parse_results(result.json()["results"])

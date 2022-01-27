@@ -75,7 +75,7 @@ class Graphite(BaseQueryRunner):
                 )
             )
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         url = "%s%s" % (self.base_url, "&".join(query.split("\n")))
         error = None
         data = None

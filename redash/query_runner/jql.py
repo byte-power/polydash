@@ -163,7 +163,7 @@ class JiraJQL(BaseHTTPQueryRunner):
         super(JiraJQL, self).__init__(configuration)
         self.syntax = "json"
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         jql_url = "{}/rest/api/2/search".format(self.configuration["url"])
 
         query = json_loads(query)

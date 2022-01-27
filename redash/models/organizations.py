@@ -14,6 +14,7 @@ class Organization(TimestampMixin, db.Model):
     SETTING_GOOGLE_APPS_DOMAINS = "google_apps_domains"
     SETTING_MICROSOFT_APPS_DOMAINS = "microsoft_apps_domains"
     SETTING_IS_PUBLIC = "is_public"
+    SETTING_MAX_QUERY_RESULT_ROWS = "max_query_result_rows"
 
     id = primary_key("Organization")
     name = Column(db.String(255))
@@ -48,6 +49,12 @@ class Organization(TimestampMixin, db.Model):
     @property
     def microsoft_apps_domains(self):
         return self.settings.get(self.SETTING_MICROSOFT_APPS_DOMAINS, [])
+
+    @property
+    def max_query_result_rows(self):
+        max_query_result_rows = self.get_setting(self.SETTING_MAX_QUERY_RESULT_ROWS, False)
+        limit_rows = max_query_result_rows if max_query_result_rows is not None else org_settings[self.SETTING_MAX_QUERY_RESULT_ROWS]
+        return int(limit_rows)
 
     @property
     def is_public(self):

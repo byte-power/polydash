@@ -152,7 +152,7 @@ class JSON(BaseHTTPQueryRunner):
     def test_connection(self):
         pass
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         query = parse_query(query)
 
         if not isinstance(query, dict):

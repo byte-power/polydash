@@ -1,5 +1,5 @@
 import logging
-import os
+import os, sys
 import threading
 
 from redash.query_runner import (
@@ -14,7 +14,7 @@ from redash.query_runner import (
     register,
 )
 from redash.settings import parse_boolean
-from redash.utils import json_dumps, json_loads
+from redash.utils import json_dumps, json_loads, MaxQueryResultRowsExpection
 
 try:
     import MySQLdb
@@ -152,7 +152,7 @@ class Mysql(BaseSQLQueryRunner):
         return list(schema.values())
 
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         ev = threading.Event()
         thread_id = ""
         r = Result()
@@ -162,7 +162,7 @@ class Mysql(BaseSQLQueryRunner):
             connection = self._connection()
             thread_id = connection.thread_id()
             t = threading.Thread(
-                target=self._run_query, args=(query, user, connection, r, ev)
+                target=self._run_query, args=(query, user, org, connection, r, ev)
             )
             t.start()
             while not ev.wait(1):
@@ -174,7 +174,7 @@ class Mysql(BaseSQLQueryRunner):
 
         return r.json_data, r.error
 
-    def _run_query(self, query, user, connection, r, ev):
+    def _run_query(self, query, user, org, connection, r, ev):
         try:
             cursor = connection.cursor()
             logger.debug("MySQL running query: %s", query)
@@ -193,10 +193,16 @@ class Mysql(BaseSQLQueryRunner):
                 columns = self.fetch_columns(
                     [(i[0], types_map.get(i[1], None)) for i in desc]
                 )
-                rows = [
-                    dict(zip((column["name"] for column in columns), row))
-                    for row in data
-                ]
+
+                rows =[]
+                query_results_count = 0
+                max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+                for row in data:
+                    if query_results_count >= max_query_result_rows:
+                        raise MaxQueryResultRowsExpection(max_query_result_rows)
+                    else:
+                        rows.append(dict(zip((column["name"] for column in columns), row)))
+                        query_results_count += 1
 
                 data = {"columns": columns, "rows": rows}
                 r.json_data = json_dumps(data)
@@ -211,6 +217,11 @@ class Mysql(BaseSQLQueryRunner):
                 cursor.close()
             r.json_data = None
             r.error = e.args[1]
+        except MaxQueryResultRowsExpection as e:
+            if cursor:
+                cursor.close()
+            r.json_data = None
+            r.error = str(e)
         finally:
             ev.set()
             if connection:

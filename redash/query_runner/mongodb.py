@@ -1,11 +1,12 @@
 import datetime
 import logging
 import re
+import sys
 
 from dateutil.parser import parse
 
 from redash.query_runner import *
-from redash.utils import JSONEncoder, json_dumps, json_loads, parse_human_time
+from redash.utils import JSONEncoder, json_dumps, json_loads, parse_human_time, MaxQueryResultRowsExpection
 
 logger = logging.getLogger(__name__)
 
@@ -83,11 +84,13 @@ def _get_column_by_name(columns, column_name):
     return None
 
 
-def parse_results(results):
+def parse_results(results, max_query_result_rows):
     rows = []
     columns = []
 
     for row in results:
+        if len(rows) > max_query_result_rows:
+            raise MaxQueryResultRowsExpection(max_query_result_rows)
         parsed_row = {}
 
         for key in row:
@@ -240,7 +243,7 @@ class MongoDB(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         db = self._get_db()
 
         logger.debug(
@@ -313,6 +316,7 @@ class MongoDB(BaseQueryRunner):
             else:
                 cursor = r
 
+        max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
         if "count" in query_data:
             columns.append(
                 {"name": "count", "friendly_name": "count", "type": TYPE_INTEGER}
@@ -320,7 +324,12 @@ class MongoDB(BaseQueryRunner):
 
             rows.append({"count": cursor})
         else:
-            rows, columns = parse_results(cursor)
+            try:
+                rows, columns = parse_results(cursor, max_query_result_rows)
+            except MaxQueryResultRowsExpection as e:
+                error = str(e)
+                json_data = None
+                return json_data, error
 
         if f:
             ordered_columns = []

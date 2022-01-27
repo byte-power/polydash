@@ -150,7 +150,7 @@ class BaseQueryRunner(object):
         if error is not None:
             raise Exception(error)
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         raise NotImplementedError()
 
     def fetch_columns(self, columns):
