@@ -1,4 +1,4 @@
-import { isNil, extend, each, includes, map, sortBy, toString } from "lodash";
+import { isNil, extend, each, includes, map, sortBy, toString, flattenDeep } from "lodash";
 import chooseTextColorForBackground from "@/lib/chooseTextColorForBackground";
 import { ColorPaletteArray } from "@/visualizations/ColorPalette";
 import { cleanNumber, normalizeValue, getSeriesAxis } from "./utils";
@@ -88,9 +88,9 @@ function prepareSeries(series, options, additionalOptions) {
   const cleanYValue = includes(["bubble", "scatter"], seriesOptions.type)
     ? normalizeValue
     : v => {
-        v = cleanNumber(v);
-        return options.missingValuesAsZero && isNil(v) ? 0.0 : v;
-      };
+      v = cleanNumber(v);
+      return options.missingValuesAsZero && isNil(v) ? 0.0 : v;
+    };
 
   const sourceData = new Map();
   const xValues = [];
@@ -101,14 +101,26 @@ function prepareSeries(series, options, additionalOptions) {
     const y = cleanYValue(row.y, seriesYAxis === "y2" ? options.yAxis[1].type : options.yAxis[0].type); // depends on series type!
     const yError = cleanNumber(row.yError); // always number
     const size = cleanNumber(row.size); // always number
-    sourceData.set(x, {
-      x,
-      y,
-      yError,
-      size,
-      yPercent: null, // will be updated later
-      row,
-    });
+    const curSourceDataItem = sourceData.get(x)
+    if (curSourceDataItem) {
+      sourceData.set(x, [...flattenDeep([curSourceDataItem]), {
+        x,
+        y,
+        yError,
+        size,
+        yPercent: null, // will be updated later
+        row,
+      }]);
+    } else {
+      sourceData.set(x, {
+        x,
+        y,
+        yError,
+        size,
+        yPercent: null, // will be updated later
+        row,
+      });
+    }
     xValues.push(x);
     yValues.push(y);
     yErrorValues.push(yError);

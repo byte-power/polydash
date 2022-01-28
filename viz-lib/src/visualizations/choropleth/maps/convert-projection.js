@@ -36,5 +36,3 @@ each(geojson.features, feature => {
       break;
   }
 });
-
-console.log(JSON.stringify(geojson));
