@@ -91,7 +91,7 @@ class Drill(BaseHTTPQueryRunner):
         schema["order"] += ["allowed_schemas"]
         return schema
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         drill_url = os.path.join(self.configuration["url"], "query.json")
 
         payload = {"queryType": "SQL", "query": query}

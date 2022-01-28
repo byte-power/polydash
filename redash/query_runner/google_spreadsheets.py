@@ -192,7 +192,7 @@ class GoogleSpreadsheet(BaseQueryRunner):
             message = parse_api_error(e)
             raise Exception(message)
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         logger.debug("Spreadsheet is about to execute query: %s", query)
         key, worksheet_num = parse_query(query)
 

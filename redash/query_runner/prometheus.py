@@ -90,7 +90,7 @@ class Prometheus(BaseQueryRunner):
             schema[name] = {"name": name, "columns": []}
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         """
         Query Syntax, actually it is the URL query string.
         Check the Prometheus HTTP API for the details of the supported query string.

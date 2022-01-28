@@ -129,7 +129,7 @@ class Results(BaseQueryRunner):
     def name(cls):
         return "Query Results"
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = sqlite3.connect(":memory:")
 
         query_ids = extract_query_ids(query)

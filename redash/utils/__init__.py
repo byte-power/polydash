@@ -242,3 +242,7 @@ def add_limit_to_query(query):
     else:
         parsed_query.tokens += limit_tokens
     return str(parsed_query)
+
+class MaxQueryResultRowsExpection(Exception):
+    def __init__(self, max_query_result_rows):
+        super(MaxQueryResultRowsExpection, self).__init__("Query interrupted. Maximum query result rows:{}".format(max_query_result_rows))

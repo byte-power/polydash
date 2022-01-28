@@ -86,7 +86,7 @@ class Phoenix(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = phoenixdb.connect(
             url=self.configuration.get("url", ""), autocommit=True
         )

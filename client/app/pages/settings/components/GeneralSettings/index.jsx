@@ -3,6 +3,7 @@ import DynamicComponent from "@/components/DynamicComponent";
 
 import FormatSettings from "./FormatSettings";
 import PlotlySettings from "./PlotlySettings";
+import MaxQueryResultRowsSettings from "./MaxQueryResultRowsSettings";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import BeaconConsentSettings from "./BeaconConsentSettings";
 
@@ -13,6 +14,7 @@ export default function GeneralSettings(props) {
       <hr />
       <FormatSettings {...props} />
       <PlotlySettings {...props} />
+      <MaxQueryResultRowsSettings {...props} />
       <FeatureFlagsSettings {...props} />
       <BeaconConsentSettings {...props} />
     </DynamicComponent>

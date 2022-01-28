@@ -128,7 +128,7 @@ class AxibaseTSD(BaseQueryRunner):
             self.configuration.get("port", 8088),
         )
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = atsd_client.connect_url(
             self.url,
             self.configuration.get("username"),

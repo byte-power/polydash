@@ -91,7 +91,7 @@ class DynamoDBSQL(BaseSQLQueryRunner):
             except DynamoDBError:
                 pass
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         engine = None
         try:
             engine = self._connect()

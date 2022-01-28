@@ -88,7 +88,7 @@ class Exasol(BaseQueryRunner):
             fetch_mapper=_exasol_type_mapper,
         )
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = self._get_connection()
         statement = None
         error = None

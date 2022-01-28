@@ -89,7 +89,7 @@ class Snowflake(BaseQueryRunner):
         data = {"columns": columns, "rows": rows}
         return data
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = self._get_connection()
         cursor = connection.cursor()
 

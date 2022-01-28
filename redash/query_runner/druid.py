@@ -35,7 +35,7 @@ class Druid(BaseQueryRunner):
     def enabled(cls):
         return enabled
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         connection = connect(
             host=self.configuration["host"],
             port=self.configuration["port"],
