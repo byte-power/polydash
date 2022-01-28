@@ -203,7 +203,6 @@ function updateLineAreaData(seriesList, options) {
 }
 
 function updateDefaultData(seriesList, options) {
-  console.log(seriesList, options, 'update');
   // Apply "percent values" modification
   updatePercentValues(seriesList, options);
 
@@ -218,7 +217,6 @@ function updateDefaultData(seriesList, options) {
 }
 
 export default function updateData(seriesList, options) {
-  console.log(seriesList, options, 'update');
   // Use only visible series
   const visibleSeriesList = filter(seriesList, s => s.visible === true);
 
