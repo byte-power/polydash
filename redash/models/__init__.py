@@ -997,6 +997,24 @@ class Alert(TimestampMixin, BelongsToOrgMixin, db.Model):
         )
 
     @classmethod
+    def search(cls, search_term, group_ids, **kwargs):
+        all_queries = cls.all(
+            group_ids
+        )
+        if search_term:
+            # Since tsvector doesn't work well with CJK languages, use `ilike` too
+            pattern = "%{}%".format(search_term)
+            return (
+                all_queries.filter(
+                    cls.name.ilike(pattern)
+                )
+                .order_by(Alert.id)
+            )
+
+        # sort the result using the weight as defined in the search vector column
+        return all_queries
+
+    @classmethod
     def get_by_id_and_org(cls, object_id, org):
         return super(Alert, cls).get_by_id_and_org(object_id, org, Query)
 
