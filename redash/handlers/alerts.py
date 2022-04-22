@@ -1,18 +1,37 @@
 import time
 
 from flask import request
-from funcy import project
+from funcy import project, partial
 
 from redash import models
 from redash.serializers import serialize_alert
-from redash.handlers.base import BaseResource, get_object_or_404, require_fields
 from redash.permissions import (
     require_access,
     require_admin_or_owner,
     require_permission,
     view_only,
 )
+from redash.handlers.base import (
+    BaseResource,
+    require_fields,
+    get_object_or_404,
+    paginate,
+    order_results as _order_results,
+)
 from redash.utils import json_dumps
+
+order_map = {
+    "name": "lowercase_name",
+    "-name": "-lowercase_name",
+    "created_at": "created_at",
+    "-created_at": "-created_at",
+    "created_by": "users-name",
+    "-created_by": "-users-name"
+}
+
+order_results = partial(
+    _order_results, default_order="-created_at", allowed_orders=order_map
+)
 
 
 class AlertResource(BaseResource):
@@ -81,6 +100,14 @@ class AlertMuteResource(BaseResource):
 
 
 class AlertListResource(BaseResource):
+    def get_queries(self, search_term):
+        if search_term:
+            return models.Alert.search(
+                search_term=search_term,
+                group_ids=self.current_user.group_ids
+            )
+        return models.Alert.all(group_ids=self.current_user.group_ids)
+
     def post(self):
         req = request.get_json(True)
         require_fields(req, ("options", "name", "query_id"))
@@ -108,18 +135,45 @@ class AlertListResource(BaseResource):
 
     @require_permission("list_alerts")
     def get(self):
+        """
+        Retrieve a list of alerts.
+
+        :qparam number page_size: Number of alerts to return per page
+        :qparam number page: Page number to retrieve
+        :qparam number order: Name of column to order by
+        :qparam number q: Full text search term
+
+        Responds with an array of :ref:`query <query-response-label>` objects.
+        """
         search_term = request.args.get("q", "")
-        self.record_event({"action": "list", "object_type": "alert"})
+        queries = self.get_queries(search_term)
+
+        # order results according to passed order parameter,
+        # special-casing search queries where the database
+        # provides an order by search rank
+        ordered_results = _order_results(queries, fallback=not bool(search_term))
+
+        page = request.args.get("page", 1, type=int)
+        page_size = request.args.get("page_size", 25, type=int)
+
+        response = paginate(
+            ordered_results,
+            page=page,
+            page_size=page_size,
+            serializer=serialize_alert,
+            with_stats=True,
+            with_last_modified_by=False,
+        )
+
         if search_term:
-            results = models.Alert.search(
-                search_term=search_term,
-                group_ids=self.current_user.group_ids
+            self.record_event(
+                {"action": "search", "object_type": "alert", "term": search_term}
             )
         else:
-            results = models.Alert.all(group_ids=self.current_user.group_ids)
-        return [
-            serialize_alert(alert) for alert in results
-        ]
+            self.record_event({"action": "list", "object_type": "alert"})
+
+        return response
+        
 
 
 class AlertSubscriptionListResource(BaseResource):
