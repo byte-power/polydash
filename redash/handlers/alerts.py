@@ -108,10 +108,17 @@ class AlertListResource(BaseResource):
 
     @require_permission("list_alerts")
     def get(self):
+        search_term = request.args.get("q", "")
         self.record_event({"action": "list", "object_type": "alert"})
+        if search_term:
+            results = models.Alert.search(
+                search_term=search_term,
+                group_ids=self.current_user.group_ids
+            )
+        else:
+            results = models.Alert.all(group_ids=self.current_user.group_ids)
         return [
-            serialize_alert(alert)
-            for alert in models.Alert.all(group_ids=self.current_user.group_ids)
+            serialize_alert(alert) for alert in results
         ]
 
 
