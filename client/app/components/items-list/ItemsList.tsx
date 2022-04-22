@@ -116,10 +116,9 @@ export function wrap<I, P = any>(
     constructor(props: ItemsListWrapperProps) {
       super(props);
 
-      const stateStorage = createStateStorage();
       const itemsSource = createItemsSource();
+      const stateStorage = createStateStorage();
       this._itemsSource = itemsSource;
-
       itemsSource.setState({ ...stateStorage.getState(), validate: false });
       itemsSource.getCallbackContext = () => this.state;
 

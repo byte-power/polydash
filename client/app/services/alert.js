@@ -1,5 +1,5 @@
 import { axios } from "@/services/axios";
-import { merge } from "lodash";
+import { merge, clone, map } from "lodash";
 
 // backwards compatibility
 const normalizeCondition = {
@@ -27,10 +27,12 @@ const transformRequest = data => {
   return newData;
 };
 
+const mapResults = data => ({ count: 20, results: map(data, item => item) });
+
 const saveOrCreateUrl = data => (data.id ? `api/alerts/${data.id}` : "api/alerts");
 
 const Alert = {
-  query: () => axios.get("api/alerts"),
+  query: (params) => axios.get("api/alerts", { params }).then(mapResults),
   get: ({ id }) => axios.get(`api/alerts/${id}`).then(transformResponse),
   save: data => axios.post(saveOrCreateUrl(data), transformRequest(data)),
   delete: data => axios.delete(`api/alerts/${data.id}`),
