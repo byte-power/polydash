@@ -19,6 +19,7 @@ export default function AlertListEmptyState({ page, searchTerm, selectedTags }) 
                         illustration="alert"
                         description="Get notified on certain events"
                         helpMessage={<EmptyStateHelpMessage helpTriggerType="ALERTS" />}
+                        showAlertStep
                     />
                 </DynamicComponent>
             );
