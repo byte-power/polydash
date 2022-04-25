@@ -151,8 +151,8 @@ class AlertListResource(BaseResource):
         # order results according to passed order parameter,
         # special-casing search queries where the database
         # provides an order by search rank
-        ordered_results = _order_results(queries, fallback=not bool(search_term))
-
+        ordered_results = order_results(queries, fallback=not bool(search_term))
+        
         page = request.args.get("page", 1, type=int)
         page_size = request.args.get("page_size", 25, type=int)
 
