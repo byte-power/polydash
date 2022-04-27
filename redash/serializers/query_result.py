@@ -1,10 +1,11 @@
 import io
 import csv
+import json
 import xlsxwriter
 from funcy import rpartial, project
 from dateutil.parser import isoparse as parse_date
 from redash.utils import json_loads, UnicodeWriter
-from redash.query_runner import TYPE_BOOLEAN, TYPE_DATE, TYPE_DATETIME
+from redash.query_runner import TYPE_BOOLEAN, TYPE_DATE, TYPE_DATETIME, TYPE_JSON
 from redash.authentication.org_resolving import current_org
 
 
@@ -29,7 +30,6 @@ def _convert_bool(value):
 
     return value
 
-
 def _convert_datetime(value, fmt):
     if not value:
         return value
@@ -37,6 +37,20 @@ def _convert_datetime(value, fmt):
     try:
         parsed = parse_date(value)
         ret = parsed.strftime(fmt)
+    except Exception:
+        return value
+
+    return ret
+
+
+def _convert_json_or_jsonb(value):
+    if not value:
+        return value
+
+    try:
+        ret = value
+        if isinstance(value, (list, dict)):
+            ret = json.dumps(value)
     except Exception:
         return value
 
@@ -56,6 +70,7 @@ def _get_column_lists(columns):
         TYPE_BOOLEAN: _convert_bool,
         TYPE_DATE: rpartial(_convert_datetime, date_format),
         TYPE_DATETIME: rpartial(_convert_datetime, datetime_format),
+        TYPE_JSON: rpartial(_convert_json_or_jsonb),
     }
 
     fieldnames = []
@@ -67,6 +82,9 @@ def _get_column_lists(columns):
         for col_type in special_types.keys():
             if col["type"] == col_type:
                 special_columns[col["name"]] = special_types[col_type]
+
+            if col["type"] is None:
+                special_columns[col["name"]] = special_types[TYPE_JSON]
 
     return fieldnames, special_columns
 
@@ -115,7 +133,7 @@ def serialize_query_result_to_xlsx(query_result):
         for c, name in enumerate(column_names):
             v = row.get(name)
             if isinstance(v, (dict, list)):
-                v = str(v)
+                v = json.dumps(v)
             sheet.write(r + 1, c, v)
 
     book.close()
