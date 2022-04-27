@@ -30,6 +30,18 @@ def _convert_bool(value):
 
     return value
 
+def _convert_datetime(value, fmt):
+    if not value:
+        return value
+
+    try:
+        parsed = parse_date(value)
+        ret = parsed.strftime(fmt)
+    except Exception:
+        return value
+
+    return ret
+
 
 def _convert_json_or_jsonb(value):
     if not value:
