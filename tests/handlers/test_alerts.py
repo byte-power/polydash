@@ -114,7 +114,7 @@ class TestAlertListGet(BaseTestCase):
         rv = self.make_request("get", "/api/alerts?q=ter")
 
         self.assertEqual(rv.status_code, 200)
-        self.assertEqual(len(rv.json["results"]), 3)
+        self.assertEqual(len(rv.json["results"]), 2)
 
 
 class TestAlertListPost(BaseTestCase):
