@@ -1,5 +1,12 @@
 # Change Log
 
+## v1.0.1 - 2022-04-29
+This release has several major changes:
+
+- Polydash-Bug Fix：导出excel或者csv时，json格式字段中的特殊字符被变化
+- Polydash中Fork功能存在的Bug
+- Polydash：alert功能，增加基于alert name的模糊搜索
+
 ## v9.0.0-beta - 2020-06-11
 
 This release was long time in the making and has several major changes:
