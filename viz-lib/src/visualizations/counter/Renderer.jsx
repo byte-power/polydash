@@ -50,8 +50,8 @@ export default function Renderer({ data, options, visualizationName }) {
     counterValue,
     counterValueTooltip,
     targetValue,
-    targetValueTooltip,
     counterLabel,
+    deviationExper
   } = getCounterData(data.rows, options, visualizationName);
   return (
     <div
@@ -61,15 +61,15 @@ export default function Renderer({ data, options, visualizationName }) {
       })}>
       <div className="counter-visualization-content" ref={setContainer}>
         <div style={getCounterStyles(scale)}>
+          <div className="counter-visualization-label">{counterLabel}</div>
           <div className="counter-visualization-value" title={counterValueTooltip}>
             {counterValue}
           </div>
           {targetValue && (
-            <div className="counter-visualization-target" title={targetValueTooltip}>
-              ({targetValue})
+            <div className="counter-visualization-deviation">
+              {deviationExper}
             </div>
           )}
-          <div className="counter-visualization-label">{counterLabel}</div>
         </div>
       </div>
     </div>

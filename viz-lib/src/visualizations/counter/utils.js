@@ -1,4 +1,5 @@
 import { isNumber, isFinite, toString } from "lodash";
+import { subtract , round } from 'mathjs';
 import numeral from "numeral";
 
 // TODO: allow user to specify number format string instead of delimiters only
@@ -66,6 +67,16 @@ function formatTooltip(value, formatString) {
   return toString(value);
 }
 
+function calcDeviationExpr(counterValue, targetValue, options) {
+  if (isNumber(counterValue) && isNumber(targetValue) && targetValue !== 0) {
+    let deviation = round(subtract(counterValue, targetValue) / targetValue, options.deviationPrecision)
+    let trendPositive = (counterValue - targetValue) >= 0;
+    let deviationExper = trendPositive ? `+${deviation}% ↑` : `${deviation}% ↓`
+    return deviationExper;
+  }
+  return options.deviationDefaultExper;
+}
+
 export function getCounterData(rows, options, visualizationName) {
   const result = {};
   const rowsCount = rows.length;
@@ -94,12 +105,12 @@ export function getCounterData(rows, options, visualizationName) {
         result.showTrend = true;
         result.trendPositive = delta >= 0;
       }
+      result.deviationExper = calcDeviationExpr(result.counterValue, result.targetValue, options);
     } else {
       result.targetValue = null;
     }
 
     result.counterValueTooltip = formatTooltip(result.counterValue, options.tooltipFormat);
-    result.targetValueTooltip = formatTooltip(result.targetValue, options.tooltipFormat);
 
     result.counterValue = formatValue(result.counterValue, options);
 
