@@ -11,7 +11,7 @@ const DEFAULT_OPTIONS = {
   stringThouSep: ",",
   tooltipFormat: "0,0.000", // TODO: Show in editor
   deviationDefaultExper: '--',
-  deviationPrecision: 0
+  deviationPrecision: 1
 };
 
 export default {

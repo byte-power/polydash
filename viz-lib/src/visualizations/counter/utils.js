@@ -1,5 +1,5 @@
 import { isNumber, isFinite, toString } from "lodash";
-import { subtract , round } from 'mathjs';
+import { subtract, round } from 'mathjs';
 import numeral from "numeral";
 
 // TODO: allow user to specify number format string instead of delimiters only
@@ -67,14 +67,22 @@ function formatTooltip(value, formatString) {
   return toString(value);
 }
 
-function calcDeviationExpr(counterValue, targetValue, options) {
+function calcDeviation(counterValue, targetValue, options) {
   if (isNumber(counterValue) && isNumber(targetValue) && targetValue !== 0) {
-    let deviation = round(subtract(counterValue, targetValue) / targetValue, options.deviationPrecision)
-    let trendPositive = (counterValue - targetValue) >= 0;
-    let deviationExper = trendPositive ? `+${deviation}% ↑` : `${deviation}% ↓`
-    return deviationExper;
+    let deviation = round((subtract(counterValue, targetValue) / targetValue) * 100, options.deviationPrecision)
+    return deviation;
+  } else {
+    return NaN;
   }
-  return options.deviationDefaultExper;
+}
+
+function adornDeviationExpr(deviationValue, options) {
+  if (isNumber(deviationValue)) {
+    let deviationExper = deviationValue > 0 ? `+${deviationValue}% ↑` : deviationValue === 0 ? `${deviationValue}% --` : `${deviationValue}% ↓`
+    return deviationExper;
+  } else {
+    return options.deviationDefaultExper;
+  }
 }
 
 export function getCounterData(rows, options, visualizationName) {
@@ -101,11 +109,10 @@ export function getCounterData(rows, options, visualizationName) {
       result.targetValue = rows[targetRowNumber][targetColName];
 
       if (Number.isFinite(result.counterValue) && isFinite(result.targetValue)) {
-        const delta = result.counterValue - result.targetValue;
         result.showTrend = true;
-        result.trendPositive = delta >= 0;
+        result.deviationValue = calcDeviation(result.counterValue, result.targetValue, options)
       }
-      result.deviationExper = calcDeviationExpr(result.counterValue, result.targetValue, options);
+      result.deviationExper = adornDeviationExpr(result.deviationValue, options);
     } else {
       result.targetValue = null;
     }
