@@ -10,20 +10,18 @@ export default function AlertListEmptyState({ page, searchTerm, selectedTags }) 
     if (searchTerm !== "") {
         return <BigMessage message="Sorry, we couldn't find anything." icon="fa-search" />;
     }
-    switch (page) {
-        case "all":
-            return (
-                <DynamicComponent name="QueriesList.EmptyState">
-                    <EmptyState
-                        icon="fa fa-bell-o"
-                        illustration="alert"
-                        description="Get notified on certain events"
-                        helpMessage={<EmptyStateHelpMessage helpTriggerType="ALERTS" />}
-                        showAlertStep
-                    />
-                </DynamicComponent>
-            );
-        default:
+    if (page === 'all') {
+        return (
+            <DynamicComponent name="AlertsList.EmptyState">
+                <EmptyState
+                    icon="fa fa-bell-o"
+                    illustration="alert"
+                    description="Get notified on certain events"
+                    helpMessage={<EmptyStateHelpMessage helpTriggerType="ALERTS" />}
+                    showAlertStep
+                />
+            </DynamicComponent>
+        );
     }
 }
 
