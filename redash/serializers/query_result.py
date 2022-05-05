@@ -50,7 +50,7 @@ def _convert_json_or_jsonb(value):
     try:
         ret = value
         if isinstance(value, (list, dict)):
-            ret = json.dumps(value)
+            ret = json.dumps(value, ensure_ascii=False)
     except Exception:
         return value
 
@@ -133,7 +133,7 @@ def serialize_query_result_to_xlsx(query_result):
         for c, name in enumerate(column_names):
             v = row.get(name)
             if isinstance(v, (dict, list)):
-                v = json.dumps(v)
+                v = json.dumps(v, ensure_ascii=False)
             sheet.write(r + 1, c, v)
 
     book.close()
