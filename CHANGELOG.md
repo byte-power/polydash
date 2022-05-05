@@ -1,5 +1,11 @@
 # Change Log
 
+## v1.1.1 - 2022-05-05
+This release has several major changes:
+
+- Polydash-Bug Fix：导出excel或者csv时，json格式字段中的特殊字符被变化, 修复中文字符被转码
+- Polydash：Counter 图表类型优化
+
 ## v1.1.0 - 2022-04-29
 This release has several major changes:
 
