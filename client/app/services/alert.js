@@ -27,10 +27,11 @@ const transformRequest = data => {
   return newData;
 };
 
+
 const saveOrCreateUrl = data => (data.id ? `api/alerts/${data.id}` : "api/alerts");
 
 const Alert = {
-  query: () => axios.get("api/alerts"),
+  query: (params) => axios.get("api/alerts", { params }),
   get: ({ id }) => axios.get(`api/alerts/${id}`).then(transformResponse),
   save: data => axios.post(saveOrCreateUrl(data), transformRequest(data)),
   delete: data => axios.delete(`api/alerts/${data.id}`),

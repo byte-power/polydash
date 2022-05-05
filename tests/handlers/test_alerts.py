@@ -79,13 +79,11 @@ class TestAlertResourceDelete(BaseTestCase):
 
 class TestAlertListGet(BaseTestCase):
     def test_returns_all_alerts(self):
-        alert = self.factory.create_alert()
+        [self.factory.create_alert() for _ in range(10)]
         rv = self.make_request("get", "/api/alerts")
 
         self.assertEqual(rv.status_code, 200)
-
-        alert_ids = [a["id"] for a in rv.json]
-        self.assertIn(alert.id, alert_ids)
+        self.assertEqual(len(rv.json["results"]), 10)
 
     def test_returns_alerts_only_from_users_groups(self):
         alert = self.factory.create_alert()
@@ -99,9 +97,24 @@ class TestAlertListGet(BaseTestCase):
 
         self.assertEqual(rv.status_code, 200)
 
-        alert_ids = [a["id"] for a in rv.json]
+        alert_ids = [a["id"] for a in rv.json["results"]]
         self.assertIn(alert.id, alert_ids)
         self.assertNotIn(alert2.id, alert_ids)
+
+    def test_search_term(self):
+        names = ["Harder", "Better", "Faster", "Stronger"]
+        for name in names:
+            self.factory.create_alert(name=name)
+
+        rv = self.make_request("get", "/api/alerts?q=better")
+
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(len(rv.json["results"]), 1)
+
+        rv = self.make_request("get", "/api/alerts?q=ter")
+
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(len(rv.json["results"]), 2)
 
 
 class TestAlertListPost(BaseTestCase):
