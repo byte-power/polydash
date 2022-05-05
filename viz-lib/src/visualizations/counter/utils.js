@@ -78,8 +78,8 @@ function calcDeviation(counterValue, targetValue, options) {
 
 function adornDeviationExpr(deviationValue, options) {
   if (isNumber(deviationValue)) {
-    let deviationExper = deviationValue > 0 ? `+${deviationValue}% ↑` : deviationValue === 0 ? `${deviationValue}% --` : `${deviationValue}% ↓`
-    return deviationExper;
+    let mark = deviationValue > 0 ? '↑' : deviationValue === 0 ? '--' : '↓'
+    return `${deviationValue}% ${mark}`
   } else {
     return options.deviationDefaultExper;
   }
