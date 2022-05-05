@@ -10,6 +10,8 @@ const DEFAULT_OPTIONS = {
   stringDecChar: ".",
   stringThouSep: ",",
   tooltipFormat: "0,0.000", // TODO: Show in editor
+  deviationDefaultExper: '--',
+  deviationPrecision: 1
 };
 
 export default {

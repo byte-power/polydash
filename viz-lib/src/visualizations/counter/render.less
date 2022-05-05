@@ -16,19 +16,18 @@
     align-items: center;
     justify-content: center;
 
-    .counter-visualization-value,
-    .counter-visualization-target {
-      font-size: 1em;
+    .counter-visualization-value {
+      font-size: .8em;
+      display: block;
+    }
+    .counter-visualization-deviation {
+      font-size: .3em;
       display: block;
     }
 
     .counter-visualization-label {
       font-size: 0.5em;
       display: block;
-    }
-
-    .counter-visualization-target {
-      color: #ccc;
     }
 
     .counter-visualization-label {
@@ -37,11 +36,15 @@
     }
   }
 
-  &.trend-positive .counter-visualization-value {
+  &.trend-positive .counter-visualization-deviation {
     color: #5cb85c;
   }
 
-  &.trend-negative .counter-visualization-value {
+  &.trend-negative .counter-visualization-deviation {
     color: #d9534f;
+  }
+
+  &.trend-invariant .counter-visualization-deviation {
+    color: #cccccc;
   }
 }

@@ -46,30 +46,31 @@ export default function Renderer({ data, options, visualizationName }) {
 
   const {
     showTrend,
-    trendPositive,
+    deviationValue,
     counterValue,
     counterValueTooltip,
     targetValue,
-    targetValueTooltip,
     counterLabel,
+    deviationExper
   } = getCounterData(data.rows, options, visualizationName);
   return (
     <div
       className={cx("counter-visualization-container", {
-        "trend-positive": showTrend && trendPositive,
-        "trend-negative": showTrend && !trendPositive,
+        "trend-positive": showTrend && deviationValue > 0,
+        "trend-negative": showTrend && deviationValue < 0,
+        "trend-invariant": showTrend && deviationValue === 0,
       })}>
       <div className="counter-visualization-content" ref={setContainer}>
         <div style={getCounterStyles(scale)}>
+          <div className="counter-visualization-label">{counterLabel}</div>
           <div className="counter-visualization-value" title={counterValueTooltip}>
             {counterValue}
           </div>
           {targetValue && (
-            <div className="counter-visualization-target" title={targetValueTooltip}>
-              ({targetValue})
+            <div className="counter-visualization-deviation">
+              {deviationExper}
             </div>
           )}
-          <div className="counter-visualization-label">{counterLabel}</div>
         </div>
       </div>
     </div>
