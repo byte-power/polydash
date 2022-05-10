@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.2.1 - 2022-05-10
+ - Dashboard: Publish的时候支持下载功能；
+
 ## v1.2.0 - 2022-05-05
 This release has several major changes:
 
