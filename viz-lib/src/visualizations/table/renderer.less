@@ -18,11 +18,14 @@
 
       th:not(.table-visualization-search) {
         position: sticky !important;
-        left: 0;
         top: 0;
+        // left: 0;
         border-top: 0;
-        z-index: 1;
         background: #fafafa !important;
+      }
+
+      th.table-visualization-search::after {
+        width: 0px;
       }
     }
   }
@@ -118,7 +121,21 @@
           }
         }
       }
+
+      th:not(.ant-table-cell-fix-left) {
+        z-index: 2;
+      }
+
+      .ant-table-cell-fix-left {
+        z-index: 3;
+      }
+
     }
+
+    .ant-table-tbody > tr.ant-table-row:hover > td {
+      background: @table-border-color;
+    }
+
   }
 
   /* START table x scroll */
@@ -141,6 +158,10 @@
       .ant-table {
         flex-grow: 1;
       }
+    }
+
+    .ant-table-content {
+      overflow: auto !important;
     }
   }
   /* END */

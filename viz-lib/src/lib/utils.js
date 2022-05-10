@@ -41,3 +41,12 @@ export function formatColumnValue(value, columnType = null) {
 
   return value;
 }
+
+export function newEval(str) {
+  try {
+    let fn = Function;
+    return new fn('return ' + str)();
+  } catch (error) {
+    return false;
+  }
+}

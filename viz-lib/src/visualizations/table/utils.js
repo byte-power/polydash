@@ -47,6 +47,7 @@ function getOrderByInfo(orderBy) {
 export function prepareColumns(columns, searchInput, orderBy, onOrderByChange) {
   columns = filter(columns, "visible");
   columns = sortBy(columns, "order");
+  columns = sortBy(columns, [function (o) { return Number(!o.isFixed); }]);
 
   const isMultiColumnSort = orderBy.length > 1;
   const orderByInfo = getOrderByInfo(orderBy);
@@ -61,6 +62,7 @@ export function prepareColumns(columns, searchInput, orderBy, onOrderByChange) {
       key: column.name,
       dataIndex: `record[${JSON.stringify(column.name)}]`,
       align: column.alignContent,
+      fixed: column.isFixed ? 'left' : false,
       sorter: { multiple: 1 }, // using { multiple: 1 } to allow built-in multi-column sort arrows
       sortOrder: get(orderByInfo, [column.name, "direction"], null),
       title: (
@@ -91,10 +93,12 @@ export function prepareColumns(columns, searchInput, orderBy, onOrderByChange) {
 
     const initColumn = ColumnTypes[column.displayAs];
     const Component = initColumn(column);
-    result.render = (unused, row) => ({
-      children: <Component row={row.record} />,
-      props: { className: `display-as-${column.displayAs}` },
-    });
+    result.render = (unused, row) => {
+      return ({
+        children: <Component row={row.record} />,
+        props: { className: `display-as-${column.displayAs}` },
+      });
+    } 
 
     return result;
   });
