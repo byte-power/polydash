@@ -39,7 +39,7 @@ WidgetDropdownButton.propTypes = {
 WidgetDropdownButton.defaultProps = {
   extraOptions: null,
   showDeleteOption: false,
-  onDelete: () => {},
+  onDelete: () => { },
 };
 
 function WidgetDeleteButton({ onClick }) {
@@ -53,7 +53,7 @@ function WidgetDeleteButton({ onClick }) {
 }
 
 WidgetDeleteButton.propTypes = { onClick: PropTypes.func };
-WidgetDeleteButton.defaultProps = { onClick: () => {} };
+WidgetDeleteButton.defaultProps = { onClick: () => { } };
 
 class Widget extends React.Component {
   static propTypes = {
@@ -80,7 +80,7 @@ class Widget extends React.Component {
     refreshStartedAt: null,
     menuOptions: null,
     tileProps: {},
-    onDelete: () => {},
+    onDelete: () => { },
   };
 
   componentDidMount() {
@@ -104,7 +104,7 @@ class Widget extends React.Component {
 
   render() {
     const { className, children, header, footer, canEdit, isEmbed, isPublic, menuOptions, tileProps } = this.props;
-    const showDropdownButton = (!isPublic || isEmbed) && (canEdit || !isEmpty(menuOptions));
+    const showDropdownButton = (canEdit || !isEmpty(menuOptions));
     return (
       <div className="widget-wrapper">
         <div className={cx("tile body-container", className)} {...tileProps}>
