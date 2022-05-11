@@ -162,7 +162,8 @@ export default function initNumberColumn(column) {
   function prepareData(row) {
     let styleProperty = displayRuleFormatter(column, row)
     return {
-      text: <div style={styleProperty}>{format(row[column.name])}</div>,
+      dom: <div style={styleProperty}>{format(row[column.name])}</div>,
+      text: format(row[column.name]),
     };
   }
 
@@ -208,8 +209,8 @@ export default function initNumberColumn(column) {
 
   function NumberColumn({ row }) {
     // eslint-disable-line react/prop-types
-    const { text } = prepareData(row);
-    return text;
+    const { dom } = prepareData(row);
+    return dom;
   }
 
   NumberColumn.prepareData = prepareData;
