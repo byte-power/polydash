@@ -150,7 +150,7 @@ Editor.propTypes = {
     name: PropTypes.string.isRequired,
     numberFormat: PropTypes.string,
     displayRuleSwitch: PropTypes.bool,
-    displayRules: PropTypes.array
+    displayRules: PropTypes.array.isRequired
   }).isRequired,
   onChange: PropTypes.func.isRequired,
 };
@@ -169,7 +169,7 @@ export default function initNumberColumn(column) {
 
   function isValid(rule) {
     let forInValues = values(rule);
-    if (forInValues.every(item => item && item !== '' && typeof (item) !== null)) {
+    if (forInValues.every(item => item !== '' && typeof (item) !== null) && typeof (item) !== undefined) {
       return true;
     } else {
       return false;

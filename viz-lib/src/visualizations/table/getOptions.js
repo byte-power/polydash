@@ -57,7 +57,12 @@ function getDefaultColumnsOptions(columns) {
     allowHTML: true,
     highlightLinks: false,
     displayRuleSwitch: false,
-    displayRules: []
+    displayRules: [{
+      op: ">",
+      opValue: 1.00,
+      type: '',
+      typeValue: null
+    }]
   }));
 }
 
