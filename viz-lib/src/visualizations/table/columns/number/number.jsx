@@ -10,7 +10,7 @@ import Select from "antd/lib/select";
 import Divider from "antd/lib/divider";
 import { CONDITIONS, TYPEOPTIONS } from './constant'
 import controlType from "./rule-type";
-import { values, map } from 'lodash';
+import { values, map, isNull } from 'lodash';
 
 function Editor({ column, onChange }) {
 
@@ -169,7 +169,7 @@ export default function initNumberColumn(column) {
 
   function isValid(rule) {
     let forInValues = values(rule);
-    if (forInValues.every(item => item !== '' && typeof (item) !== null) && typeof (item) !== undefined) {
+    if (forInValues.every(item => !isNull(item) && item !== '' && typeof (item) !== 'undefined')) {
       return true;
     } else {
       return false;
@@ -183,11 +183,6 @@ export default function initNumberColumn(column) {
         if (isValid(item)) {
           if (newEval(`${row[column.name]}${item.op}${item.opValue}`)) {
             switch (item.type) {
-              case 'fontSize':
-              case 'color':
-              case 'background':
-                property[item.type] = item.typeValue;
-                break;
               case 'fontStyle':
                 switch (item.typeValue) {
                   case 'bold':
@@ -198,8 +193,10 @@ export default function initNumberColumn(column) {
                     break;
                 }
                 break;
+              default:
+                property[item.type] = item.typeValue;
+                break;
             }
-            property[item.type] = item.typeValue;
           }
         }
       })
