@@ -72,7 +72,7 @@ SearchInput.propTypes = {
 };
 
 SearchInput.defaultProps = {
-  onChange: () => {},
+  onChange: () => { },
 };
 
 export default function Renderer({ options, data }) {
@@ -124,6 +124,7 @@ export default function Renderer({ options, data }) {
           hideOnSinglePage: true,
           showSizeChanger: false,
         }}
+        scroll={{ x: true }}
         showSorterTooltip={false}
       />
     </div>
