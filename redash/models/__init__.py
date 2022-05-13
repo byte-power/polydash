@@ -1383,6 +1383,10 @@ class ApiKey(TimestampMixin, GFKBase, db.Model):
         db.session.add(k)
         return k
 
+    @property
+    def groups(self):
+        return User.get_by_id(_id=self.created_by_id).group_ids
+
 @generic_repr("id", "name", "created_by_id", "org_id", "active")
 class Application(TimestampMixin, BelongsToOrgMixin, db.Model):
     id = primary_key("Application")

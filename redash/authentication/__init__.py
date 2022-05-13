@@ -136,7 +136,7 @@ def get_user_from_api_key(api_key, query_id):
     except models.NoResultFound:
         try:
             api_key = models.ApiKey.get_by_api_key(api_key)
-            user = models.ApiUser(api_key, api_key.org, [])
+            user = models.ApiUser(api_key, api_key.org, api_key.groups)
         except models.NoResultFound:
             if query_id:
                 query = models.Query.get_by_id_and_org(query_id, org)
