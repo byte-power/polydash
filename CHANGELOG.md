@@ -3,7 +3,7 @@
 ## v1.3.0 - 2022-05-13
 This release has several major changes:
  - Dashboard: 修复Publish下载功能缺陷；
- - Dashboard Fork功能，复制出的内容有问题
+ - Dashboard: 修复因slug不唯一导致的Fork功能缺陷；
  - table可视化优化
 
 ## v1.2.1 - 2022-05-10
