@@ -25,14 +25,14 @@ export default function useDuplicateDashboard(dashboard) {
     const tab = window.open("", tabName);
 
     setIsDuplicating(true);
-    Dashboard.fork({ slug: dashboard.slug })
+    Dashboard.fork({ id: dashboard.id })
       .then(newDashboard => {
         tab.location = keepCurrentUrlParams(newDashboard.url);
       })
       .finally(() => {
         setIsDuplicating(false);
       });
-  }, [dashboard.slug]);
+  }, [dashboard.id]);
 
   return [isDuplicating, isDuplicating ? noop : duplicateDashboard];
 }
