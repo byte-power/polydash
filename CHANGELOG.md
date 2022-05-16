@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.3.1 - 2022-05-15
+- Dashboard: 修复redash在Embed时不能下载的问题
+
 ## v1.3.0 - 2022-05-13
 This release has several major changes:
  - Dashboard: 修复Publish下载功能缺陷；
