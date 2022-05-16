@@ -72,7 +72,7 @@
     "leaflet-fullscreen": "^1.0.2",
     "leaflet.markercluster": "^1.1.0",
     "lodash": "^4.17.10",
-    "mathjs": "^10.5.0",
+    "mathjs": "10.5.0",
     "moment": "^2.19.3",
     "numeral": "^2.0.6",
     "plotly.js": "^2.8.3",

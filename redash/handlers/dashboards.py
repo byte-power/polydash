@@ -391,8 +391,8 @@ class DashboardForkResource(BaseResource):
     @require_permission('edit_dashboard')
     def post(self):
         dashboard_properties = request.get_json(force=True)
-        dashboard_slug = dashboard_properties['slug']
-        dashboard = models.Dashboard.get_by_slug_and_org(dashboard_slug, self.current_org)
+        dashboard_id = dashboard_properties['id']
+        dashboard = models.Dashboard.get_by_id_and_org(dashboard_id, self.current_org)
 
         require_admin_or_owner(dashboard.user_id)
 
@@ -401,7 +401,7 @@ class DashboardForkResource(BaseResource):
                    .outerjoin(models.Visualization)
                    .outerjoin(models.Query))
 
-        dashboard_duplicate = models.Dashboard(name=u'fork-of-{}'.format(dashboard.name, dashboard_slug),
+        dashboard_duplicate = models.Dashboard(name=u'fork-of-{}'.format(dashboard.name),
                                                org=self.current_org,
                                                user=self.current_user,
                                                is_draft=True,

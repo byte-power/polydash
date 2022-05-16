@@ -51,10 +51,18 @@ function getDefaultColumnsOptions(columns) {
     order: 100000 + index,
     title: getColumnNameWithoutType(col.name),
     allowSearch: false,
+    isFixed: false,
     alignContent: getColumnContentAlignment(col.type),
     // `string` cell options
     allowHTML: true,
     highlightLinks: false,
+    displayRuleSwitch: false,
+    displayRules: [{
+      op: ">",
+      opValue: 1.00,
+      type: '',
+      typeValue: null
+    }]
   }));
 }
 

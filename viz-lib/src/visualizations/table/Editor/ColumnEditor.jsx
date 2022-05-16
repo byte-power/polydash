@@ -55,6 +55,14 @@ export default function ColumnEditor({ column, onChange }) {
       </Section>
 
       <Section>
+        <Checkbox
+          defaultChecked={column.isFixed}
+          onChange={event => handleChange({ isFixed: event.target.checked })}>
+          Is Fixed （default left）
+        </Checkbox>
+      </Section>
+
+      <Section>
         <Select
           label="Display as:"
           data-test={`Table.Column.${column.name}.DisplayAs`}

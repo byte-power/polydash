@@ -1,5 +1,5 @@
 import initTextColumn from "./text";
-import initNumberColumn from "./number";
+import initNumberColumn from "./number/number";
 import initDateTimeColumn from "./datetime";
 import initBooleanColumn from "./boolean";
 import initLinkColumn from "./link";

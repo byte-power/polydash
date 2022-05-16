@@ -261,7 +261,7 @@ class TestDashboardForkResource(BaseTestCase):
 
         res = self.make_request(
             "POST", "/api/dashboards/fork",
-            data={"slug": dashboard.slug}
+            data={"id": dashboard.id}
         )
         self.assertEqual(res.status_code, 200)
         n = json_loads(res.data)
