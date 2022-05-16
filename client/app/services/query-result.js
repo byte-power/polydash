@@ -10,7 +10,7 @@ const logger = debug("redash:services:QueryResult");
 const filterTypes = ["filter", "multi-filter", "multiFilter"];
 
 function defer() {
-  const result = { onStatusChange: status => {} };
+  const result = { onStatusChange: status => { } };
   result.promise = new Promise((resolve, reject) => {
     result.resolve = resolve;
     result.reject = reject;
@@ -429,10 +429,10 @@ class QueryResult {
 
   getLink(queryId, fileType, apiKey, isEmbed) {
     let link = `api/queries/${queryId}/results/${this.getId()}.${fileType}`;
-    if (apiKey) {
+    if (isEmbed) {
+      link = `${link}?access_token=${apiKey}`;
+    } else if (apiKey) {
       link = `${link}?api_key=${apiKey}`;
-    } else if (isEmbed) {
-      link = `${link}?access_token=${Auth.getApiKey()}`;
     }
     return link;
   }
