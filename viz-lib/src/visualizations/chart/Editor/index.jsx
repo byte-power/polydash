@@ -9,6 +9,7 @@ import SeriesSettings from "./SeriesSettings";
 import ColorsSettings from "./ColorsSettings";
 import DataLabelsSettings from "./DataLabelsSettings";
 import CustomChartSettings from "./CustomChartSettings";
+import ConstantLineSettings from "./ConstantLineSettings";
 
 import "./editor.less";
 
@@ -55,5 +56,11 @@ export default createTabbedEditor([
     title: "Data Labels",
     component: DataLabelsSettings,
     isAvailable: options => !isCustomChart(options),
+  },
+  {
+    key: "ConstantLine",
+    title: "Constant Line",
+    component: ConstantLineSettings,
+    isAvailable: options => !isCustomChart(options) && !isPieChart(options),
   },
 ]);

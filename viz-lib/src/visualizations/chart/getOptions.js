@@ -12,6 +12,11 @@ const DEFAULT_OPTIONS = {
   series: { stacking: null, error_y: { type: "data", visible: true } },
   seriesOptions: {},
   valuesOptions: {},
+
+  // constant Line
+  constantLine: [{ name: '', reference: 0, value: null, color: '', format: 'solid' }],
+  constantLineLimit: 4,
+
   columnMapping: {},
   direction: { type: "counterclockwise" },
   sizemode: "diameter",
