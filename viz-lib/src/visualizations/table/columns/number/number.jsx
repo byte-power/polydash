@@ -189,7 +189,7 @@ export default function initNumberColumn(column) {
                     property['fontWeight'] = item.typeValue;
                     break;
                   case 'italic':
-                    property['font-style'] = item.typeValue;
+                    property['fontStyle'] = item.typeValue;
                     break;
                 }
                 break;

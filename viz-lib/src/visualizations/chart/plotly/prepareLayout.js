@@ -1,6 +1,7 @@
-import { isObject, isUndefined, filter, map, values, isNull, find, extend } from "lodash";
+import { isObject, isUndefined, filter, map, values, isNull, find, extend, isNumber } from "lodash";
 import { getPieDimensions } from "./preparePieData";
 import { FORMATOPTIONS } from "../Editor/ConstantLineSettings";
+import { ColorPaletteArray } from "@/visualizations/ColorPalette";
 
 function getAxisTitle(axis) {
   return isObject(axis.title) ? axis.title.text : null;
@@ -78,14 +79,12 @@ function preparePieLayout(layout, options, data) {
 
 function prepareConstant(layout, options) {
   function isValid(rule) {
-    let forInValues = values(rule);
-    if (forInValues.every(item => !isNull(item) && item !== '' && typeof (item) !== 'undefined')) {
-      return true;
-    } else {
-      return false;
-    }
+    return isNumber(rule.value);
   }
-  function getShapes(item) {
+  function getConstantColor(item, index) {
+    return item.color || ColorPaletteArray[index % ColorPaletteArray.length];
+  }
+  function getShapes(item, index) {
     let property = find(FORMATOPTIONS, function (o) { return o.key === item.format });
     let _ref = item.reference === 0 ? {
       xref: "paper",
@@ -103,14 +102,14 @@ function prepareConstant(layout, options) {
     const shapesTemplate = {
       type: "line",
       line: {
-        color: item.color,
+        color: getConstantColor(item, index),
         width: property.width,
         dash: property._property
       }
     }
     return extend(shapesTemplate, _ref)
   }
-  function getSannotations(item) {
+  function getSannotations(item, index) {
     let _ref = item.reference === 0 ? {
       xref: "paper",
       x: 1,
@@ -124,7 +123,7 @@ function prepareConstant(layout, options) {
       text: item.name,
       font: {
         size: 13,
-        color: item.color,
+        color: getConstantColor(item, index),
       },
       showarrow: false,
       align: "center",
@@ -133,10 +132,11 @@ function prepareConstant(layout, options) {
     return extend(annotationsTemplate, _ref)
   }
   if (options.constantLine && options.constantLine.length) {
-    options.constantLine.forEach(item => {
+    // product constant line and annotations
+    options.constantLine.forEach((item, index) => {
       if (isValid(item)) {
-        layout.shapes.push(getShapes(item));
-        layout.annotations.push(getSannotations(item));
+        layout.shapes.push(getShapes(item, index));
+        layout.annotations.push(getSannotations(item, index));
       }
     })
   }
