@@ -1,4 +1,4 @@
-import { isObject, isUndefined, filter, map, values, isNull, find, extend, isNumber } from "lodash";
+import { isObject, isUndefined, filter, map, each, find, extend, isNumber, concat } from "lodash";
 import { getPieDimensions } from "./preparePieData";
 import { FORMATOPTIONS } from "../Editor/ConstantLineSettings";
 import { ColorPaletteArray } from "@/visualizations/ColorPalette";
@@ -13,6 +13,8 @@ function getAxisScaleType(axis) {
       return "date";
     case "logarithmic":
       return "log";
+    case "customTime":
+      return "category";
     default:
       return axis.type;
   }
@@ -133,7 +135,7 @@ function prepareConstant(layout, options) {
   }
   if (options.constantLine && options.constantLine.length) {
     // product constant line and annotations
-    options.constantLine.forEach((item, index) => {
+    each(options.constantLine, (item, index) => {
       if (isValid(item)) {
         layout.shapes.push(getShapes(item, index));
         layout.annotations.push(getSannotations(item, index));
@@ -148,6 +150,7 @@ function prepareDefaultLayout(layout, options, data) {
   layout.xaxis = prepareXAxis(options.xAxis, options);
 
   layout.yaxis = prepareYAxis(options.yAxis[0]);
+
   if (y2Series.length > 0) {
     layout.yaxis2 = prepareYAxis(options.yAxis[1]);
     layout.yaxis2.overlaying = "y";
@@ -183,7 +186,9 @@ export default function prepareLayout(element, options, data) {
       traceorder: options.legend.traceorder,
     },
     shapes: [],
-    annotations: []
+    annotations: [],
+    // one of ( "x" | "y" | "closest" | false | "x unified" | "y unified" )
+    hovermode: 'x unified'
   };
 
   switch (options.globalSeriesType) {

@@ -24,11 +24,29 @@ function prepareBarSeries(series, options, additionalOptions) {
   } else {
     series.textposition = "none";
   }
+  if (options.showTotalLabels && options.series.stacking !== "stack") {
+    series.textposition = "outside";
+  }
   return series;
 }
 
 function prepareLineSeries(series, options) {
-  series.mode = "lines" + (options.showDataLabels ? "+text" : "");
+  const coefficient = options.coefficient || 1;
+  series.mode = "lines+markers" + (options.showDataLabels ? "+text" : "");
+  series.hoveron = "points";
+  series.selectedpoints = [];
+  series.unselected = {
+    marker: {
+      ...series.marker,
+      size: options.markerSize,
+    }
+  };
+  series.selected = {
+    marker: {
+      ...series.marker,
+      size: options.markerSize * coefficient,
+    }
+  };
   return series;
 }
 
@@ -97,7 +115,7 @@ function prepareSeries(series, options, additionalOptions) {
   const yValues = [];
   const yErrorValues = [];
   each(data, row => {
-    const x = normalizeValue(row.x, options.xAxis.type); // number/datetime/category
+    const x = normalizeValue(row.x, options.xAxis.type, options.xAxis.type === "customTime" ? options.xAxis.dateTimeFormat : undefined); // number/datetime/category/customTime
     const y = cleanYValue(row.y, seriesYAxis === "y2" ? options.yAxis[1].type : options.yAxis[0].type); // depends on series type!
     const yError = cleanNumber(row.yError); // always number
     const size = cleanNumber(row.size); // always number
@@ -168,6 +186,5 @@ export default function prepareDefaultData(seriesList, options) {
   const additionalOptions = {
     hoverInfoPattern: getHoverInfoPattern(options),
   };
-
   return map(seriesList, (series, index) => prepareSeries(series, options, { ...additionalOptions, index }));
 }

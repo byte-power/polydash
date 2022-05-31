@@ -1,4 +1,4 @@
-import { isArray, isObject, isString, isFunction, startsWith, reduce, merge, map, each } from "lodash";
+import { isArray, isObject, isString, isFunction, startsWith, reduce, merge, map, each, concat } from "lodash";
 import resizeObserver from "@/services/resizeObserver";
 import { Plotly, prepareData, prepareLayout, updateData, updateAxes, updateChartSize } from "../plotly";
 
@@ -59,7 +59,6 @@ export default function initChart(container, options, data, additionalOptions, o
   if (additionalOptions.hidePlotlyModeBar) {
     plotlyOptions.displayModeBar = false;
   }
-
   const plotlyData = prepareData(data, options);
   const plotlyLayout = prepareLayout(container, options, plotlyData);
 
@@ -79,7 +78,7 @@ export default function initChart(container, options, data, additionalOptions, o
     };
   }
 
-  let unwatchResize = () => {};
+  let unwatchResize = () => { };
 
   const promise = Promise.resolve()
     .then(() => Plotly.newPlot(container, plotlyData, plotlyLayout, plotlyOptions))
@@ -104,8 +103,8 @@ export default function initChart(container, options, data, additionalOptions, o
             }
           })
         );
-        options.onHover && container.on("plotly_hover", options.onHover);
-        options.onUnHover && container.on("plotly_unhover", options.onUnHover);
+        options.onHover && container.on("plotly_hover", options.onHover.bind(container));
+        options.onUnHover && container.on("plotly_unhover", options.onUnHover.bind(container));
 
         unwatchResize = resizeObserver(
           container,
