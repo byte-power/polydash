@@ -188,7 +188,7 @@ export default function prepareLayout(element, options, data) {
     shapes: [],
     annotations: [],
     // one of ( "x" | "y" | "closest" | false | "x unified" | "y unified" )
-    hovermode: 'x unified'
+    hovermode: options.swappedAxes ? "y unified" : "x unified"
   };
 
   switch (options.globalSeriesType) {
