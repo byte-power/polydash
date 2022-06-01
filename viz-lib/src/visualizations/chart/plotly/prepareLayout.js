@@ -1,5 +1,7 @@
-import { isObject, isUndefined, filter, map } from "lodash";
+import { isObject, isUndefined, filter, map, values, isNull, find, extend, isNumber } from "lodash";
 import { getPieDimensions } from "./preparePieData";
+import { FORMATOPTIONS } from "../Editor/ConstantLineSettings";
+import { ColorPaletteArray } from "@/visualizations/ColorPalette";
 
 function getAxisTitle(axis) {
   return isObject(axis.title) ? axis.title.text : null;
@@ -75,6 +77,71 @@ function preparePieLayout(layout, options, data) {
   return layout;
 }
 
+function prepareConstant(layout, options) {
+  function isValid(rule) {
+    return isNumber(rule.value);
+  }
+  function getConstantColor(item, index) {
+    return item.color || ColorPaletteArray[index % ColorPaletteArray.length];
+  }
+  function getShapes(item, index) {
+    let property = find(FORMATOPTIONS, function (o) { return o.key === item.format });
+    let _ref = item.reference === 0 ? {
+      xref: "paper",
+      x0: 0,
+      x1: 1,
+      y0: item.value,
+      y1: item.value
+    } : {
+      yref: "paper",
+      y0: 0,
+      y1: 1,
+      x0: item.value,
+      x1: item.value
+    }
+    const shapesTemplate = {
+      type: "line",
+      line: {
+        color: getConstantColor(item, index),
+        width: property.width,
+        dash: property._property
+      }
+    }
+    return extend(shapesTemplate, _ref)
+  }
+  function getSannotations(item, index) {
+    let _ref = item.reference === 0 ? {
+      xref: "paper",
+      x: 1,
+      y: item.value
+    } : {
+      yref: "paper",
+      x: item.value,
+      y: 1
+    }
+    const annotationsTemplate = {
+      text: item.name,
+      font: {
+        size: 13,
+        color: getConstantColor(item, index),
+      },
+      showarrow: false,
+      align: "center",
+      xanchor: 'left'
+    }
+    return extend(annotationsTemplate, _ref)
+  }
+  if (options.constantLine && options.constantLine.length) {
+    // product constant line and annotations
+    options.constantLine.forEach((item, index) => {
+      if (isValid(item)) {
+        layout.shapes.push(getShapes(item, index));
+        layout.annotations.push(getSannotations(item, index));
+      }
+    })
+  }
+}
+
 function prepareDefaultLayout(layout, options, data) {
   const y2Series = data.filter(s => s.yaxis === "y2");
 
@@ -91,6 +158,9 @@ function prepareDefaultLayout(layout, options, data) {
     layout.barmode = "relative";
   }
 
+  if (options.constantLine.length > 0) {
+    prepareConstant(layout, options);
+  }
   return layout;
 }
 
@@ -112,6 +182,8 @@ export default function prepareLayout(element, options, data) {
     legend: {
       traceorder: options.legend.traceorder,
     },
+    shapes: [],
+    annotations: []
   };
 
   switch (options.globalSeriesType) {
