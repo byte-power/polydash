@@ -25,7 +25,13 @@ function defaultFormatSeriesTextForPie(item) {
   return item["@@yPercent"] + " (" + item["@@y"] + ")";
 }
 
+
+
 function createTextFormatter(options) {
+  if (options.showTotalLabels && options.globalSeriesType === "column" && options.series.stacking !== 'stack') {
+    const formatNumber = createNumberFormatter(options.totalNumberFormat);
+    return item => formatNumber(item[item["@@name"]]);
+  }
   if (options.textFormat === "") {
     return options.globalSeriesType === "pie" ? defaultFormatSeriesTextForPie : defaultFormatSeriesText;
   }
@@ -90,7 +96,6 @@ function updateSeriesText(seriesList, options) {
       }
 
       extend(text, item.row.$raw);
-
       series.text.push(formatText(text));
     });
   });
