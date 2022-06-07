@@ -1,4 +1,4 @@
-import { isUndefined, isArray, reduce, sum, filter, isNumber, add, isObject, map } from "lodash";
+import { isUndefined, isArray, reduce, add, filter, isNumber, isObject, map } from "lodash";
 import moment from "moment";
 import plotlyCleanNumber from "plotly.js/src/lib/clean_number";
 import { createNumberFormatter } from "@/lib/value-format";
@@ -68,7 +68,7 @@ export function productTotalSeries(seriesList, options) {
       if (isArray(value)) {
         pre[key] = reduce(value, (sum, n) => sum + n.y, curAfreshDefinitionItem);
       } else {
-        pre[key] = sum(curAfreshDefinitionItem, value.y);
+        pre[key] = add(curAfreshDefinitionItem, value.y);
       }
     })
     return pre;

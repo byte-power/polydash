@@ -30,7 +30,7 @@ function defaultFormatSeriesTextForPie(item) {
 function createTextFormatter(options) {
   if (options.showTotalLabels && options.globalSeriesType === "column" && options.series.stacking !== 'stack') {
     const formatNumber = createNumberFormatter(options.totalNumberFormat);
-    return item => formatNumber(item[item["@@name"]]);
+    return item => formatNumber(item['@@yy']);
   }
   if (options.textFormat === "") {
     return options.globalSeriesType === "pie" ? defaultFormatSeriesTextForPie : defaultFormatSeriesText;
@@ -84,6 +84,7 @@ function updateSeriesText(seriesList, options) {
       // (if needed)
       text["@@x"] = formatValue(item.row.x, "x", options);
       text["@@y"] = yValueIsAny ? formatValue(item.row.y, series.yaxis, options) : formatNumber(item.y);
+      text["@@yy"] = yValueIsAny ? formatValue(item.row.y, series.yaxis, options) : item.y;
       if (item.yError !== undefined) {
         text["@@yError"] = formatNumber(item.yError);
       }

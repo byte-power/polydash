@@ -1,4 +1,4 @@
-import { isArray, isObject, isString, isFunction, startsWith, reduce, merge, map, each, concat } from "lodash";
+import { isArray, isObject, isString, isFunction, startsWith, reduce, merge, map, each } from "lodash";
 import resizeObserver from "@/services/resizeObserver";
 import { Plotly, prepareData, prepareLayout, updateData, updateAxes, updateChartSize } from "../plotly";
 
@@ -61,7 +61,6 @@ export default function initChart(container, options, data, additionalOptions, o
   }
   const plotlyData = prepareData(data, options);
   const plotlyLayout = prepareLayout(container, options, plotlyData);
-
   let isDestroyed = false;
 
   let updater = initPlotUpdater();
@@ -77,6 +76,26 @@ export default function initChart(container, options, data, additionalOptions, o
       }
     };
   }
+
+  function recoverAxes(seriesList, layout, options) {
+    // recover Axes
+    if (options.swappedAxes) {
+      each(seriesList, series => {
+        delete series.orientation;
+        const { x, y } = series;
+        series.x = y;
+        series.y = x;
+      });
+
+      const { xaxis, yaxis } = layout;
+
+      if (isObject(xaxis) && isObject(yaxis)) {
+        layout.xaxis = yaxis;
+        layout.yaxis = xaxis;
+      }
+    }
+  }
+
 
   let unwatchResize = () => { };
 
@@ -98,6 +117,7 @@ export default function initChart(container, options, data, additionalOptions, o
             // This event is triggered if some plotly data/layout has changed.
             // We need to catch only changes of traces visibility to update stacking
             if (isArray(updates) && isObject(updates[0]) && updates[0].visible) {
+              recoverAxes(plotlyData, plotlyLayout, options);
               updateData(plotlyData, options);
               updater.append(updateAxes(container, plotlyData, plotlyLayout, options)).process(container);
             }

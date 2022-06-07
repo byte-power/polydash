@@ -100,7 +100,6 @@ function prepareSeries(series, options, additionalOptions) {
 
   // Sort by x - `Map` preserves order of items
   const data = options.sortX ? sortBy(series.data, d => normalizeValue(d.x, options.xAxis.type)) : series.data;
-
   // For bubble/scatter charts `y` may be any (similar to `x`) - numeric is only bubble size;
   // for other types `y` is always number
   const cleanYValue = includes(["bubble", "scatter"], seriesOptions.type)
