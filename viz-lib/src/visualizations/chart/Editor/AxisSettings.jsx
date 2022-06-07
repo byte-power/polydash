@@ -61,7 +61,7 @@ export default function AxisSettings({ id, options, features, onChange }) {
             label={
               <React.Fragment>
                 Date/Time Values Format
-                <ContextHelp.DateTimeFormatSpecs />
+                <ContextHelp.CustomDateTimeFormatSpecs />
               </React.Fragment>
             }
             defaultValue={options.dateTimeFormat}
