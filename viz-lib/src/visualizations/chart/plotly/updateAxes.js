@@ -56,7 +56,6 @@ export default function updateAxes(plotlyElement, seriesList, layout, options) {
       range: null,
     };
   }
-
   return [
     updates,
     () => {
@@ -74,7 +73,6 @@ export default function updateAxes(plotlyElement, seriesList, layout, options) {
         updates.yaxis2.autorange = false;
         updates.yaxis2.range = calculateAxisRange(defaultRange, axisOptions.rangeMin, axisOptions.rangeMax);
       }
-
       // Swap Axes
       if (options.swappedAxes) {
         each(seriesList, series => {
@@ -82,12 +80,14 @@ export default function updateAxes(plotlyElement, seriesList, layout, options) {
           const { x, y } = series;
           series.x = y;
           series.y = x;
+          series.hoverinfo = series.name === '@@total' ? 'none' : 'text+y+name';
         });
 
         const { xaxis } = layout;
         const { yaxis, yaxis2 } = updates;
 
         if (isObject(xaxis) && isObject(yaxis)) {
+          yaxis.autorange = true;
           updates.xaxis = yaxis;
           updates.yaxis = xaxis;
         }
@@ -100,7 +100,6 @@ export default function updateAxes(plotlyElement, seriesList, layout, options) {
       if (options.alignYAxesAtZero && isObject(layout.yaxis) && isObject(layout.yaxis2)) {
         alignYAxesAtZero(updates.yaxis, updates.yaxis2);
       }
-
       return [updates, null]; // no further updates
     },
   ];

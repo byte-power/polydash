@@ -23,6 +23,8 @@ const VALID_OPTIONS = [
   "hiddenFromDragDrop",
   "menuLimit",
   "unusedOrientationCutoff",
+  "aggregators",
+  "aggregatorTemplates",
   "controls",
   "rendererOptions",
 ];
@@ -62,4 +64,4 @@ export default function Renderer({ data, options, onOptionsChange }) {
 }
 
 Renderer.propTypes = RendererPropTypes;
-Renderer.defaultProps = { onOptionsChange: () => {} };
+Renderer.defaultProps = { onOptionsChange: () => { } };

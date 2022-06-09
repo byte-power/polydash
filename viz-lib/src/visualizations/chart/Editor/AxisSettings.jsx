@@ -3,7 +3,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useDebouncedCallback } from "use-debounce";
 import * as Grid from "antd/lib/grid";
-import { Section, Select, Input, InputNumber } from "@/components/visualizations/editor";
+import { Section, Select, Input, InputNumber, ContextHelp } from "@/components/visualizations/editor";
 
 function toNumber(value) {
   value = isNumber(value) ? value : parseFloat(value);
@@ -19,6 +19,8 @@ export default function AxisSettings({ id, options, features, onChange }) {
     const title = isString(text) && text !== "" ? { text } : null;
     optionsChanged({ title });
   }, 200);
+
+  const [debouncedOnOptionsChange] = useDebouncedCallback(optionsChanged, 200);
 
   const [handleMinMaxChange] = useDebouncedCallback(opts => optionsChanged(opts), 200);
 
@@ -36,7 +38,7 @@ export default function AxisSettings({ id, options, features, onChange }) {
             </Select.Option>
           )}
           <Select.Option value="datetime" data-test={`Chart.${id}.Type.DateTime`}>
-            Datetime
+            Datetime （auto）
           </Select.Option>
           <Select.Option value="linear" data-test={`Chart.${id}.Type.Linear`}>
             Linear
@@ -47,8 +49,26 @@ export default function AxisSettings({ id, options, features, onChange }) {
           <Select.Option value="category" data-test={`Chart.${id}.Type.Category`}>
             Category
           </Select.Option>
+          <Select.Option value="customTime">
+            Datetime （custom）
+          </Select.Option>
         </Select>
       </Section>
+
+      {options.type === "customTime" && (
+        <Section>
+          <Input
+            label={
+              <React.Fragment>
+                Date/Time Values Format
+                <ContextHelp.DateTimeFormatSpecs />
+              </React.Fragment>
+            }
+            defaultValue={options.dateTimeFormat}
+            onChange={e => debouncedOnOptionsChange({ dateTimeFormat: e.target.value })}
+          />
+        </Section>
+      )}
 
       <Section>
         <Input
@@ -106,5 +126,5 @@ AxisSettings.propTypes = {
 
 AxisSettings.defaultProps = {
   features: {},
-  onChange: () => {},
+  onChange: () => { },
 };

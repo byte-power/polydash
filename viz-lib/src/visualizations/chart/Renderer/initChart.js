@@ -59,10 +59,8 @@ export default function initChart(container, options, data, additionalOptions, o
   if (additionalOptions.hidePlotlyModeBar) {
     plotlyOptions.displayModeBar = false;
   }
-
   const plotlyData = prepareData(data, options);
   const plotlyLayout = prepareLayout(container, options, plotlyData);
-
   let isDestroyed = false;
 
   let updater = initPlotUpdater();
@@ -79,7 +77,27 @@ export default function initChart(container, options, data, additionalOptions, o
     };
   }
 
-  let unwatchResize = () => {};
+  function recoverAxes(seriesList, layout, options) {
+    // recover Axes
+    if (options.swappedAxes) {
+      each(seriesList, series => {
+        delete series.orientation;
+        const { x, y } = series;
+        series.x = y;
+        series.y = x;
+      });
+
+      const { xaxis, yaxis } = layout;
+
+      if (isObject(xaxis) && isObject(yaxis)) {
+        layout.xaxis = yaxis;
+        layout.yaxis = xaxis;
+      }
+    }
+  }
+
+
+  let unwatchResize = () => { };
 
   const promise = Promise.resolve()
     .then(() => Plotly.newPlot(container, plotlyData, plotlyLayout, plotlyOptions))
@@ -99,13 +117,14 @@ export default function initChart(container, options, data, additionalOptions, o
             // This event is triggered if some plotly data/layout has changed.
             // We need to catch only changes of traces visibility to update stacking
             if (isArray(updates) && isObject(updates[0]) && updates[0].visible) {
+              recoverAxes(plotlyData, plotlyLayout, options);
               updateData(plotlyData, options);
               updater.append(updateAxes(container, plotlyData, plotlyLayout, options)).process(container);
             }
           })
         );
-        options.onHover && container.on("plotly_hover", options.onHover);
-        options.onUnHover && container.on("plotly_unhover", options.onUnHover);
+        options.onHover && container.on("plotly_hover", options.onHover.bind(container));
+        options.onUnHover && container.on("plotly_unhover", options.onUnHover.bind(container));
 
         unwatchResize = resizeObserver(
           container,

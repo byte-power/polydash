@@ -24,11 +24,16 @@ function prepareBarSeries(series, options, additionalOptions) {
   } else {
     series.textposition = "none";
   }
+  if (options.showTotalLabels && options.series.stacking !== "stack") {
+    series.textposition = "outside";
+  }
   return series;
 }
 
 function prepareLineSeries(series, options) {
-  series.mode = "lines" + (options.showDataLabels ? "+text" : "");
+  series.mode = "lines+markers" + (options.showDataLabels ? "+text" : "");
+  series.hoveron = "points";
+  series.marker.size = options.markerSize;
   return series;
 }
 
@@ -82,7 +87,6 @@ function prepareSeries(series, options, additionalOptions) {
 
   // Sort by x - `Map` preserves order of items
   const data = options.sortX ? sortBy(series.data, d => normalizeValue(d.x, options.xAxis.type)) : series.data;
-
   // For bubble/scatter charts `y` may be any (similar to `x`) - numeric is only bubble size;
   // for other types `y` is always number
   const cleanYValue = includes(["bubble", "scatter"], seriesOptions.type)
@@ -97,7 +101,7 @@ function prepareSeries(series, options, additionalOptions) {
   const yValues = [];
   const yErrorValues = [];
   each(data, row => {
-    const x = normalizeValue(row.x, options.xAxis.type); // number/datetime/category
+    const x = normalizeValue(row.x, options.xAxis.type, options.xAxis.type === "customTime" ? options.xAxis.dateTimeFormat : undefined); // number/datetime/category/customTime
     const y = cleanYValue(row.y, seriesYAxis === "y2" ? options.yAxis[1].type : options.yAxis[0].type); // depends on series type!
     const yError = cleanNumber(row.yError); // always number
     const size = cleanNumber(row.size); // always number
@@ -168,6 +172,5 @@ export default function prepareDefaultData(seriesList, options) {
   const additionalOptions = {
     hoverInfoPattern: getHoverInfoPattern(options),
   };
-
   return map(seriesList, (series, index) => prepareSeries(series, options, { ...additionalOptions, index }));
 }

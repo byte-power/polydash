@@ -9,6 +9,10 @@ export default function DataLabelsSettings({ options, onOptionsChange }) {
     ["line", "area", "column", "scatter", "pie", "heatmap"],
     options.globalSeriesType
   );
+  const isShowTotalLabelsAvailable = includes(
+    ["column"],
+    options.globalSeriesType
+  );
 
   const [debouncedOnOptionsChange] = useDebouncedCallback(onOptionsChange, 200);
 
@@ -107,6 +111,30 @@ export default function DataLabelsSettings({ options, onOptionsChange }) {
           onChange={e => debouncedOnOptionsChange({ textFormat: e.target.value })}
         />
       </Section>
+
+      {isShowTotalLabelsAvailable &&
+        (<React.Fragment>
+          <Section>
+            <Checkbox
+              defaultChecked={options.showTotalLabels}
+              onChange={event => onOptionsChange({ showTotalLabels: event.target.checked })}>
+              Show Total Labels
+            </Checkbox>
+          </Section>
+          <Section>
+            <Input
+              label={
+                <React.Fragment>
+                  Total Number Values Format
+                  <ContextHelp.NumberFormatSpecs />
+                </React.Fragment>
+              }
+              defaultValue={options.totalNumberFormat}
+              onChange={e => debouncedOnOptionsChange({ totalNumberFormat: e.target.value })}
+            />
+          </Section>
+        </React.Fragment>)}
+
     </React.Fragment>
   );
 }

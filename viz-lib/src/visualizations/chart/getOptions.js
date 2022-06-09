@@ -1,11 +1,12 @@
-import { merge } from "lodash";
+import { includes, merge } from "lodash";
+import { Plotly } from "./plotly";
 import { visualizationsSettings } from "@/visualizations/visualizationsSettings";
 
 const DEFAULT_OPTIONS = {
   globalSeriesType: "column",
   sortX: true,
   legend: { enabled: true, placement: "auto", traceorder: "normal" },
-  xAxis: { type: "-", labels: { enabled: true } },
+  xAxis: { type: "-", labels: { enabled: true }, dateTimeFormat: visualizationsSettings.dateTimeFormat },
   yAxis: [{ type: "linear" }, { type: "linear", opposite: true }],
   alignYAxesAtZero: false,
   error_y: { type: "data", visible: true },
@@ -28,7 +29,12 @@ const DEFAULT_OPTIONS = {
   // dateTimeFormat: 'DD/MM/YYYY HH:mm', // will be set from visualizationsSettings
   textFormat: "", // default: combination of {{ @@yPercent }} ({{ @@y }} ± {{ @@yError }})
 
+  showTotalLabels: false,
+  totalNumberFormat: "0,0[.]00000",
+
   missingValuesAsZero: true,
+
+  onHover: null
 };
 
 export default function getOptions(options) {
@@ -39,7 +45,8 @@ export default function getOptions(options) {
       showDataLabels: options.globalSeriesType === "pie",
       dateTimeFormat: visualizationsSettings.dateTimeFormat,
     },
-    options
+    options,
+    { markerSize: options.globalSeriesType === "line" && 6 }
   );
 
   // Backward compatibility
