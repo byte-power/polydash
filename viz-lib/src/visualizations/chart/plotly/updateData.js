@@ -3,7 +3,6 @@ import { createNumberFormatter, formatSimpleTemplate } from "@/lib/value-format"
 import { normalizeValue, productTotalSeries, polymerization } from "./utils";
 
 function shouldUseUnifiedXAxis(options) {
-  // return options.sortX && options.xAxis.type === "category" && options.globalSeriesType !== "box";
   return options.sortX && options.globalSeriesType !== "box";
 }
 
@@ -214,11 +213,9 @@ function updateDefaultData(seriesList, options) {
   // The original logic is aggregated by default only when it is not stacked
   // Change to the default aggregation operation
 
-  // if (!options.series.stacking) {
   if (shouldUseUnifiedXAxis(options)) {
     updateUnifiedXAxisValues(seriesList, options);
   }
-  // }
 
   // Finally - update text labels
   updateSeriesText(seriesList, options);

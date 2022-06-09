@@ -31,22 +31,8 @@ function prepareBarSeries(series, options, additionalOptions) {
 }
 
 function prepareLineSeries(series, options) {
-  const coefficient = options.coefficient || 1;
   series.mode = "lines+markers" + (options.showDataLabels ? "+text" : "");
   series.hoveron = "points";
-  // series.selectedpoints = [];
-  // series.unselected = {
-  //   marker: {
-  //     ...series.marker,
-  //     size: options.markerSize,
-  //   }
-  // };
-  // series.selected = {
-  //   marker: {
-  //     ...series.marker,
-  //     size: options.markerSize * coefficient,
-  //   }
-  // };
   series.marker = {
     ...series.marker,
     size: options.markerSize,

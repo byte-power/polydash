@@ -55,43 +55,5 @@ export default function getOptions(options) {
     result.series.stacking = "stack";
   }
 
-  // line Animate plotly_hover 
-  // todo
-  // if (includes(["line"], options.globalSeriesType)) {
-  //   result.coefficient = 1.4;
-  //   result.onHover = function (updates) {
-  //     let tn = updates.points[0].curveNumber;
-  //     let pn = updates.points[0].pointNumber;
-  //     Plotly.animate(this, {
-  //       data: [{
-  //         selectedpoints: [pn]
-  //       }],
-  //       traces: [tn]
-  //     }, {
-  //       transition: {
-  //         duration: 200,
-  //         easing: "quad-in-out"
-  //       }
-  //     })
-  //   }
-  //   result.onUnHover = function (updates) {
-  //     let tn = updates.points[0].curveNumber;
-  //     Plotly.animate(this, {
-  //       data: [{
-  //         selectedpoints: []
-  //       }],
-  //       traces: [tn]
-  //     }, {
-  //       transition: {
-  //         duration: 100,
-  //         easing: "quad-in-out"
-  //       }
-  //     })
-  //   }
-  // } else {
-  //   result.onHover = null
-  //   result.onUnHover = null
-  // }
-
   return result;
 }
