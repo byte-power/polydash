@@ -33,10 +33,7 @@ function prepareBarSeries(series, options, additionalOptions) {
 function prepareLineSeries(series, options) {
   series.mode = "lines+markers" + (options.showDataLabels ? "+text" : "");
   series.hoveron = "points";
-  series.marker = {
-    ...series.marker,
-    size: options.markerSize,
-  };
+  series.marker.size = options.markerSize;
   return series;
 }
 

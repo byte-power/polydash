@@ -34,8 +34,7 @@ const DEFAULT_OPTIONS = {
 
   missingValuesAsZero: true,
 
-  onHover: null,
-  markerSize: 6
+  onHover: null
 };
 
 export default function getOptions(options) {
@@ -46,7 +45,8 @@ export default function getOptions(options) {
       showDataLabels: options.globalSeriesType === "pie",
       dateTimeFormat: visualizationsSettings.dateTimeFormat,
     },
-    options
+    options,
+    { markerSize: options.globalSeriesType === "line" && 6 }
   );
 
   // Backward compatibility
