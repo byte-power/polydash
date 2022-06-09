@@ -35,7 +35,7 @@ const DEFAULT_OPTIONS = {
   missingValuesAsZero: true,
 
   onHover: null,
-  markerSize: 8
+  markerSize: 6
 };
 
 export default function getOptions(options) {
