@@ -23,8 +23,6 @@ const VALID_OPTIONS = [
   "hiddenFromDragDrop",
   "menuLimit",
   "unusedOrientationCutoff",
-  "aggregators",
-  "aggregatorTemplates",
   "controls",
   "rendererOptions",
 ];
