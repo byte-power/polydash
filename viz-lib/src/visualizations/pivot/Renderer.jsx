@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { get, find, pick, map, mapValues } from "lodash";
-import PivotTableUI from "react-pivottable/PivotTableUI";
+import PivotTableUI from "react-pivottable-secondary/PivotTableUI";
+// import PivotTableUI from "../../../react-pivottable/PivotTableUI";
+// import '../../../react-pivottable/src/pivottable.css';
 import { RendererPropTypes } from "@/visualizations/prop-types";
 import { formatColumnValue } from "@/lib/utils";
 
-import "react-pivottable/pivottable.css";
+import "react-pivottable-secondary/pivottable.css";
 import "./renderer.less";
 
 const VALID_OPTIONS = [
@@ -12,8 +14,10 @@ const VALID_OPTIONS = [
   "cols",
   "vals",
   "aggregatorName",
+  "aggregatorGather",
   "valueFilter",
   "sorters",
+  "sorterFilter",
   "rowOrder",
   "colOrder",
   "derivedAttributes",
@@ -56,10 +60,13 @@ export default function Renderer({ data, options, onOptionsChange }) {
       data-hide-row-totals={hideRowTotals || null}
       data-hide-column-totals={hideColumnTotals || null}
       data-test="PivotTableVisualization">
-      <PivotTableUI {...pick(config, VALID_OPTIONS)} data={dataRows} onChange={onChange} />
+      <PivotTableUI
+        {...pick(config, VALID_OPTIONS)}
+        data={dataRows}
+        onChange={onChange} />
     </div>
   );
 }
 
 Renderer.propTypes = RendererPropTypes;
-Renderer.defaultProps = { onOptionsChange: () => {} };
+Renderer.defaultProps = { onOptionsChange: () => { } };

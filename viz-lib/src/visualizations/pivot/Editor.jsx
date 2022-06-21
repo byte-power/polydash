@@ -1,12 +1,34 @@
-import { merge } from "lodash";
+import { merge, map } from "lodash";
 import React from "react";
-import { Section, Switch } from "@/components/visualizations/editor";
+import { Section, Switch, Select } from "@/components/visualizations/editor";
 import { EditorPropTypes } from "@/visualizations/prop-types";
+
 
 export default function Editor({ options, onOptionsChange }) {
   const updateOptions = updates => {
     onOptionsChange(merge({}, options, updates));
   };
+
+  const povitTableOptions = [
+    {
+      key: 'Exportable TSV',
+      value: 'Exportable TSV'
+    },
+    {
+      key: 'Table',
+      value: 'Table'
+    },
+    {
+      key: 'Table Col Heatmap',
+      value: 'Table Col Heatmap'
+    }, {
+      key: 'Table Heatmap',
+      value: 'Table Heatmap'
+    }, {
+      key: 'Table Row Heatmap',
+      value: 'Table Row Heatmap'
+    },
+  ];
 
   return (
     <React.Fragment>
@@ -35,7 +57,22 @@ export default function Editor({ options, onOptionsChange }) {
           Show Column Totals
         </Switch>
       </Section>
-    </React.Fragment>
+      <Section>
+        <Select
+          label="Pivot Table Type"
+          showSearch
+          placeholder="Choose Pivot Table Type"
+          value={options.rendererName}
+          onChange={value => updateOptions({ rendererName: value })}
+        >
+          {map(povitTableOptions, c => (
+            <Select.Option key={c.key} value={c.value}>
+              {c.value}
+            </Select.Option>
+          ))}
+        </Select>
+      </Section>
+    </React.Fragment >
   );
 }
 
