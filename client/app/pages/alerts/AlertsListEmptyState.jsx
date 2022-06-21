@@ -1,8 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Link from "@/components/Link";
 import BigMessage from "@/components/BigMessage";
-import NoTaggedObjectsFound from "@/components/NoTaggedObjectsFound";
 import EmptyState, { EmptyStateHelpMessage } from "@/components/empty-state/EmptyState";
 import DynamicComponent from "@/components/DynamicComponent";
 

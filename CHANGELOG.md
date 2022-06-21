@@ -1,4 +1,15 @@
-# Change Log
+# ChangeLog
+
+## v1.4.1 - 2022-06-10
+- 撤销pivot的代码修改
+
+## v1.4.0 - 2022-06-09
+- line&bar可视化优化
+- 自定义日期格式功能
+- 支持在可视化中的指定位置添加恒定线、并能够自定义线条的颜色及形式
+- 浮窗（tooltip)可展示同一坐标轴上的所有数值
+- 对于Bar类型,Total Labels指每个bar上所有segment总计值
+- 增加默认行为，auto针对x轴group by
 
 ## v1.3.1 - 2022-05-15
 - Dashboard: 修复redash在Embed时不能下载的问题

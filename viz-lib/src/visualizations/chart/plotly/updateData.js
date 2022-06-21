@@ -1,9 +1,9 @@
-import { isNil, each, extend, filter, identity, includes, map, sortBy, isEqual, cloneDeep } from "lodash";
+import { isNil, each, extend, filter, identity, includes, map, sortBy, isEqual, cloneDeep, reduce, isArray, concat, findIndex, merge } from "lodash";
 import { createNumberFormatter, formatSimpleTemplate } from "@/lib/value-format";
-import { normalizeValue } from "./utils";
+import { normalizeValue, productTotalSeries, polymerization } from "./utils";
 
 function shouldUseUnifiedXAxis(options) {
-  return options.sortX && options.xAxis.type === "category" && options.globalSeriesType !== "box";
+  return options.sortX && options.globalSeriesType !== "box";
 }
 
 function defaultFormatSeriesText(item) {
@@ -24,7 +24,13 @@ function defaultFormatSeriesTextForPie(item) {
   return item["@@yPercent"] + " (" + item["@@y"] + ")";
 }
 
+
+
 function createTextFormatter(options) {
+  if (options.showTotalLabels && options.globalSeriesType === "column" && options.series.stacking !== 'stack') {
+    const formatNumber = createNumberFormatter(options.totalNumberFormat);
+    return item => formatNumber(item['@@yy']);
+  }
   if (options.textFormat === "") {
     return options.globalSeriesType === "pie" ? defaultFormatSeriesTextForPie : defaultFormatSeriesText;
   }
@@ -57,26 +63,16 @@ function updateSeriesText(seriesList, options) {
 
   each(seriesList, series => {
     const seriesOptions = options.seriesOptions[series.name] || { type: options.globalSeriesType };
-
     series.text = [];
     series.hover = [];
     const xValues = options.globalSeriesType === "pie" ? series.labels : series.x;
-    let num = 0;
-    let backupItem = {};
     xValues.forEach((x, index) => {
       const text = {
         "@@name": series.name,
       };
       let item = series.sourceData.get(x) || { x, y: defaultY, row: { x, y: defaultY } };
       if (Array.isArray(item)) {
-        if (isEqual(item, backupItem)) {
-          num++
-          item = item[num]
-        } else {
-          num = 0
-          backupItem = cloneDeep(item)
-          item = item[num]
-        }
+        item = polymerization(item);
       }
       const yValueIsAny = includes(["bubble", "scatter"], seriesOptions.type);
 
@@ -87,6 +83,7 @@ function updateSeriesText(seriesList, options) {
       // (if needed)
       text["@@x"] = formatValue(item.row.x, "x", options);
       text["@@y"] = yValueIsAny ? formatValue(item.row.y, series.yaxis, options) : formatNumber(item.y);
+      text["@@yy"] = yValueIsAny ? formatValue(item.row.y, series.yaxis, options) : item.y;
       if (item.yError !== undefined) {
         text["@@yError"] = formatNumber(item.yError);
       }
@@ -99,7 +96,6 @@ function updateSeriesText(seriesList, options) {
       }
 
       extend(text, item.row.$raw);
-
       series.text.push(formatText(text));
     });
   });
@@ -139,8 +135,8 @@ function getUnifiedXAxisValues(seriesList, sorted) {
   const set = new Set();
   each(seriesList, series => {
     // `Map.forEach` will walk items in insertion order
-    series.sourceData.forEach(item => {
-      set.add(item.x);
+    series.sourceData.forEach((value, key) => {
+      set.add(key);
     });
   });
 
@@ -154,13 +150,21 @@ function updateUnifiedXAxisValues(seriesList, options) {
   each(seriesList, series => {
     series.x = [];
     series.y = [];
+    series.text = [];
     series.error_y.array = [];
     each(unifiedX, x => {
       series.x.push(x);
       const item = series.sourceData.get(x);
       if (item) {
-        series.y.push(options.series.percentValues ? item.yPercent : item.y);
-        series.error_y.array.push(item.yError);
+        if (isArray(item)) {
+          series.y.push(reduce(item, (sum, n) => sum + (options.series.percentValues ? n.yPercent : n.y), 0));
+          series.text.push(reduce(item, (sum, n) => sum + (options.series.percentValues ? n.yPercent : n.y), 0));
+          series.error_y.array.push(reduce(item, (sum, n) => sum + n.yError, 0));
+        } else {
+          series.y.push(options.series.percentValues ? item.yPercent : item.y);
+          series.text.push(options.series.percentValues ? item.yPercent : item.y);
+          series.error_y.array.push(item.yError);
+        }
       } else {
         series.y.push(defaultY);
         series.error_y.array.push(null);
@@ -206,10 +210,11 @@ function updateDefaultData(seriesList, options) {
   // Apply "percent values" modification
   updatePercentValues(seriesList, options);
 
-  if (!options.series.stacking) {
-    if (shouldUseUnifiedXAxis(options)) {
-      updateUnifiedXAxisValues(seriesList, options);
-    }
+  // The original logic is aggregated by default only when it is not stacked
+  // Change to the default aggregation operation
+
+  if (shouldUseUnifiedXAxis(options)) {
+    updateUnifiedXAxisValues(seriesList, options);
   }
 
   // Finally - update text labels
@@ -218,7 +223,7 @@ function updateDefaultData(seriesList, options) {
 
 export default function updateData(seriesList, options) {
   // Use only visible series
-  const visibleSeriesList = filter(seriesList, s => s.visible === true);
+  const visibleSeriesList = filter(seriesList, s => s.visible === true && s.name !== '@@total');
 
   if (visibleSeriesList.length > 0) {
     switch (options.globalSeriesType) {
@@ -236,5 +241,16 @@ export default function updateData(seriesList, options) {
         break;
     }
   }
-  return seriesList;
+  if (options && options.showTotalLabels && options.globalSeriesType === "column" && options.series.stacking === 'stack') {
+    // Keep the object pointer unchanged
+    let index_total = findIndex(seriesList, function (o) { return o.name === '@@total' });
+    if (!!~index_total) {
+      seriesList[index_total] = productTotalSeries(seriesList, options);
+      return seriesList;
+    } else {
+      return concat(seriesList, productTotalSeries(seriesList, options));
+    }
+  } else {
+    return seriesList;
+  }
 }

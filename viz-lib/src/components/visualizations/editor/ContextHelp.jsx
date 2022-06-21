@@ -44,12 +44,11 @@ function DateTimeFormatSpecs() {
   return (
     <HelpTriggerComponent
       title="Formatting Dates and Times"
-      href="https://momentjs.com/docs/#/displaying/format/"
+      href="http://momentjs.cn/docs/#/displaying/format/"
       className="visualization-editor-context-help">
       {ContextHelp.defaultIcon}
     </HelpTriggerComponent>
   );
 }
-
 ContextHelp.NumberFormatSpecs = NumberFormatSpecs;
 ContextHelp.DateTimeFormatSpecs = DateTimeFormatSpecs;

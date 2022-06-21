@@ -11,9 +11,10 @@ const DEFAULT_OPTIONS = {
     table: {
       colTotals: true,
       rowTotals: true,
-    },
-  },
+    }
+  }
 };
+
 
 export default {
   type: "PIVOT",
