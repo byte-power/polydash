@@ -1,22 +1,18 @@
 @import "../variables.less";
 
 .pivot-table-visualization-container {
-  &[data-hide-controls] {
-    .pvtAxisContainer,
-    .pvtRenderers,
-    .pvtVals {
-      display: none;
-    }
-  }
+  height: 100%;
 
   &[data-hide-row-totals] {
-    td:last-child,
     th:last-child {
       &.pvtTotalLabel:not(:empty),
       &.pvtTotal,
       &.pvtGrandTotal {
         display: none;
       }
+    }
+    .pvtRowTotal {
+      display: none;
     }
   }
 
