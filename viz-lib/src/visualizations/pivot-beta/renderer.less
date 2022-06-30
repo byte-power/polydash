@@ -5,65 +5,65 @@
 
   &[data-hide-row-totals] {
     th:last-child {
-      &.pvtTotalLabel:not(:empty),
-      &.pvtTotal,
-      &.pvtGrandTotal {
+      &.pivotTotalLabel:not(:empty),
+      &.pivotTotal,
+      &.pivotGrandTotal {
         display: none;
       }
     }
-    .pvtRowTotal {
+    .pivotRowTotal {
       display: none;
     }
   }
 
   &[data-hide-column-totals] {
     tbody > tr:last-child {
-      & > .pvtTotalLabel,
-      & > .pvtTotal,
-      & > .pvtGrandTotal {
+      & > .pivotTotalLabel,
+      & > .pivotTotal,
+      & > .pivotGrandTotal {
         display: none;
       }
     }
   }
 }
 
-.pvtAxisContainer,
-.pvtVals {
+.pivotAxisContainer,
+.pivotVals {
   border: 1px solid fade(@visualizations-gray, 15%);
   background: #fff;
 }
 
-.pvtAxisContainer li span.pvtAttr {
+.pivotAxisContainer li span.pivotAttr {
   background: fade(@visualizations-gray, 10%);
   border: 1px solid fade(@visualizations-gray, 15%);
   border-radius: 3px;
 }
 
-.pvtCheckContainer {
+.pivotCheckContainer {
   border-top: 1px solid fade(@visualizations-gray, 15%);
   border-bottom: 1px solid fade(@visualizations-gray, 15%);
 }
 
-.pvtCheckContainer p {
+.pivotCheckContainer p {
   margin: 2px;
   line-height: 1;
 }
 
-.pvtTriangle {
+.pivotTriangle {
   color: fade(@visualizations-gray, 90%);
 }
 
-table.pvtTable thead tr th,
-table.pvtTable tbody tr th {
+table.pivotTable thead tr th,
+table.pivotTable tbody tr th {
   background-color: fade(@visualizations-gray, 10%);
   border: 1px solid #ced8dc;
 }
 
-table.pvtTable tbody tr td {
+table.pivotTable tbody tr td {
   border: 1px solid #ced8dc;
 }
 
-.pvtFilterBox {
+.pivotFilterBox {
   border: 1px solid fade(@visualizations-gray, 15%);
   border-radius: 3px;
   box-shadow: fade(@visualizations-gray, 15%) 0px 4px 9px -3px;
