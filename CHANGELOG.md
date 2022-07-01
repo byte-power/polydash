@@ -1,5 +1,11 @@
 # ChangeLog
 
+## v1.5.0 - 2022-07-01
+- pivot 支持多value
+- pivot 增加字段排序
+- chart xAxis中 category type 针对date不做日期处理
+- multiFilter改造
+
 ## v1.4.1 - 2022-06-10
 - 撤销pivot的代码修改
 
