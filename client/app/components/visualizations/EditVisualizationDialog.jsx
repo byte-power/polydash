@@ -153,7 +153,7 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
   // When editing existing visualization chart type selector is disabled, so add only existing visualization's
   // descriptor there (to properly render the component). For new visualizations show all types except of deprecated
   const availableVisualizations = isNew
-    ? filter(sortBy(registeredVisualizations, ["name"]), vis => !vis.isDeprecated)
+    ? filter(sortBy(registeredVisualizations, ["sort", "name"]), vis => !vis.isDeprecated)
     : pick(registeredVisualizations, [type]);
 
   return (

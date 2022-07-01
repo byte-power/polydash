@@ -17,8 +17,8 @@ const DEFAULT_OPTIONS = {
 
 
 export default {
-  type: "PIVOT",
-  name: "Pivot Table",
+  type: "PIVOTBETA",
+  name: "透视表",
   getOptions: options => merge({}, DEFAULT_OPTIONS, options),
   Renderer,
   Editor,
@@ -26,5 +26,5 @@ export default {
   defaultRows: 10,
   defaultColumns: 3,
   minColumns: 2,
-  sort: 4
+  sort: 2
 };

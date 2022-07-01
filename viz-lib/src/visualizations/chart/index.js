@@ -14,4 +14,5 @@ export default {
   defaultRows: 8,
   minColumns: 1,
   minRows: 5,
+  sort: 1
 };

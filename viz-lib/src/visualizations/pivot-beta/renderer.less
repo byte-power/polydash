@@ -1,0 +1,93 @@
+@import "../variables.less";
+
+.pivot-table-visualization-container {
+  height: 100%;
+
+  &[data-hide-row-totals] {
+    th:last-child {
+      &.pivotTotalLabel:not(:empty),
+      &.pivotTotal,
+      &.pivotGrandTotal {
+        display: none;
+      }
+    }
+    .pivotRowTotal {
+      display: none;
+    }
+  }
+
+  &[data-hide-column-totals] {
+    tbody > tr:last-child {
+      & > .pivotTotalLabel,
+      & > .pivotTotal,
+      & > .pivotGrandTotal {
+        display: none;
+      }
+    }
+  }
+}
+
+.pivotAxisContainer,
+.pivotVals {
+  border: 1px solid fade(@visualizations-gray, 15%);
+  background: #fff;
+}
+
+.pivotAxisContainer li span.pivotAttr {
+  background: fade(@visualizations-gray, 10%);
+  border: 1px solid fade(@visualizations-gray, 15%);
+  border-radius: 3px;
+}
+
+.pivotCheckContainer {
+  border-top: 1px solid fade(@visualizations-gray, 15%);
+  border-bottom: 1px solid fade(@visualizations-gray, 15%);
+}
+
+.pivotCheckContainer p {
+  margin: 2px;
+  line-height: 1;
+}
+
+.pivotTriangle {
+  color: fade(@visualizations-gray, 90%);
+}
+
+table.pivotTable thead tr th,
+table.pivotTable tbody tr th {
+  background-color: fade(@visualizations-gray, 10%);
+  border: 1px solid #ced8dc;
+}
+
+table.pivotTable tbody tr td {
+  border: 1px solid #ced8dc;
+}
+
+.pivotFilterBox {
+  border: 1px solid fade(@visualizations-gray, 15%);
+  border-radius: 3px;
+  box-shadow: fade(@visualizations-gray, 15%) 0px 4px 9px -3px;
+
+  button {
+    background-color: rgba(102, 136, 153, 0.15);
+    margin-right: 5px;
+    border: 1px solid transparent;
+    padding: 3px 6px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    border-radius: 3px;
+
+    &:hover {
+      background-color: rgba(102, 136, 153, 0.25);
+    }
+  }
+
+  input[type="text"] {
+    width: 90%;
+    margin: 0 auto 10px;
+    height: 35px;
+    padding: 6px 12px;
+    border: 1px solid #e8e8e8;
+    border-radius: 3px;
+  }
+}
