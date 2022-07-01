@@ -20,7 +20,12 @@ export function normalizeValue(value, axisType, dateTimeFormat = "YYYY-MM-DD HH:
     value = moment.utc(value);
   }
   if (moment.isMoment(value)) {
-    return value.format(dateTimeFormat);
+    // Category is not formatted by default if it is of the time type
+    if (axisType === 'category') {
+      return value['_i'];
+    } else {
+      return value.format(dateTimeFormat);
+    }
   }
   return value;
 }
