@@ -26,4 +26,5 @@ export default {
   defaultRows: 10,
   defaultColumns: 3,
   minColumns: 2,
+  sort: 4
 };
