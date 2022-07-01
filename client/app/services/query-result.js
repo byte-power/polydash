@@ -299,9 +299,9 @@ class QueryResult {
       filters.forEach(filter => {
         filter.values.push(row[filter.name]);
         if (filter.values.length === 1) {
-          if (filter.multiple) {
-            filter.current = [row[filter.name]];
-          } else {
+          if (!filter.multiple) {
+          //   filter.current = [row[filter.name]];
+          // } else {
             filter.current = row[filter.name];
           }
         }
@@ -315,6 +315,9 @@ class QueryResult {
         }
         return v;
       });
+      if (filter.multiple) {
+        filter.current = filter.values
+      }
     });
 
     return filters;
