@@ -1,7 +1,8 @@
 import logging
+import sys
 
 from redash.query_runner import *
-from redash.utils import json_dumps, json_loads
+from redash.utils import MaxQueryResultRowsExpection, json_dumps, json_loads
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ class Trino(BaseQueryRunner):
 
         return list(schema.values())
 
-    def run_query(self, query, user):
+    def run_query(self, query, user, org=None):
         if self.configuration.get("password"):
             auth = trino.auth.BasicAuthentication(
                 username=self.configuration.get("username"),
@@ -122,6 +123,9 @@ class Trino(BaseQueryRunner):
         try:
             cursor.execute(query)
             results = cursor.fetchall()
+            max_query_result_rows = org.max_query_result_rows if org else sys.maxsize
+            if len(results) > max_query_result_rows:
+                raise MaxQueryResultRowsExpection(max_query_result_rows)
             description = cursor.description
             columns = self.fetch_columns([
                 (c[0], TRINO_TYPES_MAPPING.get(c[1], None)) for c in description
@@ -144,6 +148,10 @@ class Trino(BaseQueryRunner):
             else:
                 message = None
             error = default_message if message is None else message
+        except MaxQueryResultRowsExpection as e:
+            cursor.cancel()
+            json_data = None
+            error = str(e)
         except (KeyboardInterrupt, InterruptException, JobTimeoutException):
             cursor.cancel()
             raise
