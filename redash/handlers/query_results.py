@@ -109,19 +109,27 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
             )
         }
     else:
-        job = enqueue_query(
-            query_text,
-            data_source,
-            current_user.id,
-            current_user.is_api_user(),
-            metadata={
-                "Username": repr(current_user)
-                if current_user.is_api_user()
-                else current_user.email,
-                "Query ID": query_id,
-            },
-        )
-        return serialize_job(job)
+        # don't execute query
+        return {
+            "job": {
+                "status": 5,
+            }
+        }
+
+
+        # job = enqueue_query(
+        #     query_text,
+        #     data_source,
+        #     current_user.id,
+        #     current_user.is_api_user(),
+        #     metadata={
+        #         "Username": repr(current_user)
+        #         if current_user.is_api_user()
+        #         else current_user.email,
+        #         "Query ID": query_id,
+        #     },
+        # )
+        # return serialize_job(job)
 
 
 def get_download_filename(query_result, query, filetype):
