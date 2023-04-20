@@ -132,14 +132,15 @@ export class Query {
     return this.queryResult;
   }
 
-  getQueryResult(maxAge) {
+  getQueryResult(maxAge, trigger = false) {
     const execute = () =>
       QueryResult.getByQueryId(
         this.id,
         this.getParameters().getExecutionValues(),
         this.getAutoLimit(),
         maxAge,
-        getToken()
+        getToken(),
+        trigger
       );
     return this.prepareQueryResultExecution(execute, maxAge);
   }

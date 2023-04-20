@@ -49,7 +49,7 @@ const DashboardWidget = React.memo(
   }) {
     const { type } = widget;
     const onLoad = () => onLoadWidget(widget);
-    const onRefresh = () => onRefreshWidget(widget);
+    const onRefresh = (trigger) => onRefreshWidget(widget, trigger);
     const onDelete = () => onRemoveWidget(widget.id);
 
     if (type === WidgetTypeEnum.VISUALIZATION) {

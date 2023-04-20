@@ -106,12 +106,12 @@ function useDashboard(dashboardData) {
     updateDashboard({ is_draft: !dashboard.is_draft }, false);
   }, [dashboard, updateDashboard]);
 
-  const loadWidget = useCallback((widget, forceRefresh = false) => {
+  const loadWidget = useCallback((widget, forceRefresh = false, trigger) => {
     widget.getParametersDefs(); // Force widget to read parameters values from URL
     setDashboard(currentDashboard => extend({}, currentDashboard));
     const { max_age } = location.search;
     return widget
-      .load(forceRefresh, max_age)
+      .load(forceRefresh, max_age, trigger)
       .catch(error => {
         // QueryResultErrors are expected
         if (error instanceof QueryResultError) {
@@ -122,7 +122,7 @@ function useDashboard(dashboardData) {
       .finally(() => setDashboard(currentDashboard => extend({}, currentDashboard)));
   }, []);
 
-  const refreshWidget = useCallback(widget => loadWidget(widget, true), [loadWidget]);
+  const refreshWidget = useCallback((widget, trigger) => loadWidget(widget, true, trigger), [loadWidget]);
 
   const removeWidget = useCallback(widgetId => {
     setDashboard(currentDashboard =>
@@ -136,12 +136,11 @@ function useDashboard(dashboardData) {
   dashboardRef.current = dashboard;
 
   const loadDashboard = useCallback(
-    (forceRefresh = false, updatedParameters = []) => {
+    (forceRefresh = false, updatedParameters = [], trigger) => {
       const affectedWidgets = getAffectedWidgets(dashboardRef.current.widgets, updatedParameters);
       const loadWidgetPromises = compact(
-        affectedWidgets.map(widget => loadWidget(widget, forceRefresh).catch(error => error))
+        affectedWidgets.map(widget => loadWidget(widget, forceRefresh, trigger).catch(error => error))
       );
-
       return Promise.all(loadWidgetPromises).then(() => {
         const queryResults = compact(map(dashboardRef.current.widgets, widget => widget.getQueryResult()));
         const updatedFilters = collectDashboardFilters(dashboardRef.current, queryResults, location.search);
@@ -152,7 +151,7 @@ function useDashboard(dashboardData) {
   );
 
   const refreshDashboard = useCallback(
-    updatedParameters => {
+    (updatedParameters) => {
       if (!refreshing) {
         setRefreshing(true);
         loadDashboard(true, updatedParameters).finally(() => setRefreshing(false));

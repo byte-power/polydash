@@ -137,7 +137,6 @@ class QueryResult {
     if ("query_result" in props) {
       this.status = ExecutionStatus.DONE;
       this.deferred.onStatusChange(ExecutionStatus.DONE);
-
       const columnTypes = {};
 
       // TODO: we should stop manipulating incoming data, and switch to relaying
@@ -444,7 +443,7 @@ class QueryResult {
     return `${queryName.replace(/ /g, "_") + moment(this.getUpdatedAt()).format("_YYYY_MM_DD")}.${fileType}`;
   }
 
-  static getByQueryId(id, parameters, applyAutoLimit, maxAge, token) {
+  static getByQueryId(id, parameters, applyAutoLimit, maxAge, token, trigger) {
     const queryResult = new QueryResult();
     axios
       .post(`api/queries/${id}/results` + token, {
@@ -452,12 +451,21 @@ class QueryResult {
         parameters,
         apply_auto_limit: applyAutoLimit,
         max_age: maxAge,
+        trigger
       })
       .then(response => {
         queryResult.update(response);
-
         if ("job" in response) {
-          queryResult.refreshStatus(id, parameters, null, applyAutoLimit);
+          if (response.job.status === 5) {
+            queryResult.update({
+              job: {
+                error: 'The resource is not cached. Please manually trigger the update', 
+                status: 3
+              },
+            });
+          } else {
+            queryResult.refreshStatus(id, parameters, null, applyAutoLimit);
+          }
         }
       })
       .catch(error => {
