@@ -133,7 +133,7 @@ function VisualizationWidgetFooter({ widget, isPublic, onRefresh, onExpand }) {
   const refreshWidget = buttonId => {
     if (!refreshClickButtonId) {
       setRefreshClickButtonId(buttonId);
-      onRefresh().finally(() => setRefreshClickButtonId(null));
+      onRefresh(true).finally(() => setRefreshClickButtonId(null));
     }
   };
 

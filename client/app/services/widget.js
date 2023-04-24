@@ -126,7 +126,7 @@ class Widget {
     return truncate(this.text, 20);
   }
 
-  load(force, maxAge) {
+  load(force, maxAge, trigger) {
     if (!this.visualization) {
       return Promise.resolve();
     }
@@ -148,7 +148,7 @@ class Widget {
         maxAge = num;
       }
 
-      const queryResult = this.getQuery().getQueryResult(maxAge);
+      const queryResult = this.getQuery().getQueryResult(maxAge, trigger);
       this.queryResult = queryResult;
 
       queryResult
