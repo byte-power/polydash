@@ -60,7 +60,7 @@ error_messages = {
 }
 
 
-def run_query(query, parameters, data_source, query_id, should_apply_auto_limit, max_age=0, link_flag=False, trigger='true'):
+def run_query(query, parameters, data_source, query_id, should_apply_auto_limit, max_age=0, link_flag=False, trigger=True):
     if data_source.paused:
         if data_source.pause_reason:
             message = "{} is paused ({}). Please try later.".format(
@@ -110,7 +110,7 @@ def run_query(query, parameters, data_source, query_id, should_apply_auto_limit,
         }
     else:
         # don't execute query
-        if not link_flag and trigger == 'false':
+        if not link_flag and trigger == False:
             return {
                 "job": {
                     "status": 5,
@@ -202,7 +202,7 @@ class QueryResultListResource(BaseResource):
         if not has_access(data_source, self.current_user, not_view_only):
             return error_messages["no_permission"]
         link_flag = True if 'access_token' in request.args else False
-        trigger = params.get('trigger', 'true')
+        trigger = params.get('trigger', True)
         return run_query(
             parameterized_query, parameters, data_source, query_id, should_apply_auto_limit, max_age, link_flag, trigger
         )
@@ -321,7 +321,7 @@ class QueryResultResource(BaseResource):
             query, self.current_user, allow_executing_with_view_only_permissions
         ):  
             link_flag = True if 'access_token' in request.args else False
-            trigger = params.get('trigger', 'true')
+            trigger = params.get('trigger', True)
             return run_query(
                 query.parameterized,
                 parameter_values,
