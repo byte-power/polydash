@@ -460,7 +460,7 @@ class QueryResult {
             queryResult.update({
               job: {
                 error: 'The resource is not cached. Please manually trigger the update', 
-                status: 3
+                status: 4
               },
             });
           } else {
