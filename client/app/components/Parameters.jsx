@@ -109,7 +109,7 @@ export default class Parameters extends React.Component {
       if (!disableUrlUpdate) {
         updateUrl(parameters, filterParam);
       }
-      onValuesChange(parametersWithPendingValues);
+      onValuesChange(parametersWithPendingValues, true);
       return { parameters };
     });
   };
