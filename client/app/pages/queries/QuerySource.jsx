@@ -170,7 +170,7 @@ function QuerySource(props) {
           return query.getQueryResultByText(0, selectedText);
         });
       } else {
-        executeQuery();
+        executeQuery(0, null, true);
       }
     },
     [query, queryFlags.canExecute, areParametersDirty, isQueryExecuting, isDirty, selectedText, executeQuery]

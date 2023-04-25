@@ -151,10 +151,10 @@ function useDashboard(dashboardData) {
   );
 
   const refreshDashboard = useCallback(
-    (updatedParameters) => {
+    (updatedParameters, trigger) => {
       if (!refreshing) {
         setRefreshing(true);
-        loadDashboard(true, updatedParameters).finally(() => setRefreshing(false));
+        loadDashboard(true, updatedParameters, trigger).finally(() => setRefreshing(false));
       }
     },
     [refreshing, loadDashboard]

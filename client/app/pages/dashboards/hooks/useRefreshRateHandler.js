@@ -27,7 +27,7 @@ export default function useRefreshRateHandler(refreshDashboard) {
   useEffect(() => {
     location.setSearch({ refresh: refreshRate || null }, true);
     if (refreshRate) {
-      const refreshTimer = setInterval(doRefreshDashboard, refreshRate * 1000);
+      const refreshTimer = setInterval(doRefreshDashboard, refreshRate * 1000, null,true);
       return () => clearInterval(refreshTimer);
     }
   }, [refreshRate, doRefreshDashboard]);

@@ -78,7 +78,7 @@ function QueryView(props) {
       if (!queryFlags.canExecute || (!skipParametersDirtyFlag && (areParametersDirty || isExecuting))) {
         return;
       }
-      executeQuery(null, null, true);
+      executeQuery(0, null, true);
     },
     [areParametersDirty, executeQuery, isExecuting, queryFlags.canExecute]
   );

@@ -70,7 +70,7 @@ function RefreshButton({ dashboardOptions }) {
     const parsedRefreshRate = parseFloat(key);
     if (parsedRefreshRate) {
       setRefreshRate(parsedRefreshRate);
-      refreshDashboard();
+      refreshDashboard(null, true);
     } else {
       disableRefreshRate();
     }
