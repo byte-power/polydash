@@ -55,6 +55,7 @@ export const ExecutionStatus = {
   PROCESSING: "processing",
   DONE: "done",
   FAILED: "failed",
+  REJECT: 'reject',
   LOADING_RESULT: "loading-result",
 };
 
@@ -63,6 +64,7 @@ const statuses = {
   2: ExecutionStatus.PROCESSING,
   3: ExecutionStatus.DONE,
   4: ExecutionStatus.FAILED,
+  5: ExecutionStatus.REJECT,
 };
 
 function handleErrorResponse(queryResult, error) {
@@ -108,7 +110,7 @@ export function fetchDataFromJob(jobId, interval = 1000) {
       return sleep(interval).then(() => fetchDataFromJob(data.job.id));
     } else if (status === ExecutionStatus.DONE) {
       return data.job.result;
-    } else if (status === ExecutionStatus.FAILED) {
+    } else if (status === ExecutionStatus.FAILED || status === ExecutionStatus.REJECT) {
       return Promise.reject(data.job.error);
     }
   });
@@ -183,6 +185,9 @@ class QueryResult {
       this.deferred.onStatusChange(ExecutionStatus.PROCESSING);
       this.status = "processing";
     } else if (this.job.status === 4) {
+      this.status = statuses[this.job.status];
+      this.deferred.reject(new QueryResultError(this.job.error));
+    } else if (this.job.status === 5) {
       this.status = statuses[this.job.status];
       this.deferred.reject(new QueryResultError(this.job.error));
     } else {
@@ -454,13 +459,15 @@ class QueryResult {
         trigger
       })
       .then(response => {
+
         queryResult.update(response);
+        
         if ("job" in response) {
           if (response.job.status === 5) {
             queryResult.update({
               job: {
-                error: 'The resource is not cached. Please manually trigger the update', 
-                status: 4
+                error: 'There is no cached result. Please manually trigger the refresh.', 
+                status: 5
               },
             });
           } else {

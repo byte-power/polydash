@@ -262,6 +262,16 @@ class VisualizationWidget extends React.Component {
             )}
           </div>
         );
+      case "reject":
+          return (
+            <div className="body-row-auto scrollbox">
+              {widgetQueryResult.getError() && (
+                <div className="alert alert-warning m-5">
+                  <strong>{widgetQueryResult.getError()}</strong>
+                </div>
+              )}
+            </div>
+          );
       case "done":
         return (
           <div className="body-row-auto scrollbox">
