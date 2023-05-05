@@ -460,6 +460,8 @@ class QueryResult {
       })
       .then(response => {
 
+        console.log(response, 'response');
+
         queryResult.update(response);
         
         if ("job" in response) {
