@@ -467,7 +467,7 @@ class QueryResult {
             queryResult.update({
               job: {
                 error: 'There is no cached result. Please manually trigger the refresh.', 
-                status: 5
+                status: 4
               },
             });
           } else {
