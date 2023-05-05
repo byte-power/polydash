@@ -253,25 +253,27 @@ class VisualizationWidget extends React.Component {
     const widgetStatus = widgetQueryResult && widgetQueryResult.getStatus();
     switch (widgetStatus) {
       case "failed":
+        const filterError = widgetQueryResult.getError().replace("__$__", "");
         return (
           <div className="body-row-auto scrollbox">
             {widgetQueryResult.getError() && (
-              <div className="alert alert-danger m-5">
-                Error running query: <strong>{widgetQueryResult.getError()}</strong>
+              <div
+                className={cx(
+                  ~widgetQueryResult.getError().indexOf("__$__") ? "alert-warning" : "alert-danger",
+                  "alert m-5"
+                )}>
+                {!~widgetQueryResult.getError().indexOf("__$__") ? (
+                  <React.Fragment>
+                    Error running query:
+                    <strong>${filterError}</strong>
+                  </React.Fragment>
+                ) : (
+                  `${filterError}`
+                )}
               </div>
             )}
           </div>
         );
-      case "reject":
-          return (
-            <div className="body-row-auto scrollbox">
-              {widgetQueryResult.getError() && (
-                <div className="alert alert-warning m-5">
-                  <strong>{widgetQueryResult.getError()}</strong>
-                </div>
-              )}
-            </div>
-          );
       case "done":
         return (
           <div className="body-row-auto scrollbox">
