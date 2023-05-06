@@ -201,7 +201,7 @@ class QueryResultListResource(BaseResource):
 
         if not has_access(data_source, self.current_user, not_view_only):
             return error_messages["no_permission"]
-        link_flag = True if 'access_token' in request.args else False
+        link_flag = True if 'access_token' in request.args or 'public/dashboards' in request.url  else False
         trigger = params.get('trigger', True)
         return run_query(
             parameterized_query, parameters, data_source, query_id, should_apply_auto_limit, max_age, link_flag, trigger
@@ -320,7 +320,7 @@ class QueryResultResource(BaseResource):
         if has_access(
             query, self.current_user, allow_executing_with_view_only_permissions
         ):  
-            link_flag = True if 'access_token' in request.args else False
+            link_flag = True if 'access_token' in request.args or 'public/dashboards' in request.url else False
             trigger = params.get('trigger', True)
             return run_query(
                 query.parameterized,
