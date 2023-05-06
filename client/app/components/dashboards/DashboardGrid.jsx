@@ -48,7 +48,8 @@ const DashboardWidget = React.memo(
     filters,
   }) {
     const { type } = widget;
-    const onLoad = () => onLoadWidget(widget);
+    // todo
+    const onLoad = (trigger) => onLoadWidget(widget, false, trigger);
     const onRefresh = (trigger) => onRefreshWidget(widget, trigger);
     const onDelete = () => onRemoveWidget(widget.id);
 

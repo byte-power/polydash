@@ -218,10 +218,10 @@ class VisualizationWidget extends React.Component {
   }
 
   componentDidMount() {
-    const { widget, onLoad } = this.props;
+    const { widget, onLoad, isPublic } = this.props;
     recordEvent("view", "query", widget.visualization.query.id, { dashboard: true });
     recordEvent("view", "visualization", widget.visualization.id, { dashboard: true });
-    onLoad();
+    onLoad(isPublic);
   }
 
   onLocalFiltersChange = localFilters => {
