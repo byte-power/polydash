@@ -6,7 +6,8 @@ import Button from "antd/lib/button";
 import Timer from "@/components/Timer";
 
 export default function QueryExecutionStatus({ status, updatedAt, error, isCancelling, onCancel }) {
-  const alertType = status === "failed" ? (~error.indexOf("__$__") ? "warning" : "error") : "info";
+  console.log(error);
+  const alertType = status === "failed" ? (~error?.indexOf("__$__") ? "warning" : "error") : "info";
   const showTimer = status !== "failed" && updatedAt;
   const isCancelButtonAvailable = includes(["waiting", "processing"], status);
   let message = isCancelling ? <React.Fragment>Cancelling&hellip;</React.Fragment> : null;
@@ -26,10 +27,10 @@ export default function QueryExecutionStatus({ status, updatedAt, error, isCance
       message = <React.Fragment>Loading results&hellip;</React.Fragment>;
       break;
     case "failed":
-      let filterError = error.replace("__$__", "");
+      let filterError = error?.replace("__$__", "");
       message = (
         <React.Fragment>
-          {!~error.indexOf("__$__") ? (
+          {!~error?.indexOf("__$__") ? (
             <React.Fragment>
               Error running query:
               <strong>${filterError}</strong>
