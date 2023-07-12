@@ -83,6 +83,9 @@ class Trino(BaseQueryRunner):
             FROM information_schema.columns
             WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
         """
+        trino_schema = self.configuration.get("schema", "default")
+        if trino_schema!= "default":
+            query += f" AND table_schema = '{trino_schema}'"
         results, error = self.run_query(query, None)
 
         if error is not None:
