@@ -39,7 +39,7 @@ TRINO_TYPES_MAPPING = {
 }
 
 
-class Trino(BaseQueryRunner):
+class Trino(BaseSQLQueryRunner):
     noop_query = "SELECT 1"
     should_annotate_query = False
 
